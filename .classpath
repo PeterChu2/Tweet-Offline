@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="C:/Users/Peter/Desktop/Desktop Folders/sdk/adt-bundle-windows-x86_64-20130219/sdk/platforms/android-19/android.jar"/>
+	<classpathentry exported="true" kind="lib" path="/appcompat_v7_3/libs/android-support-v4.jar"/>
+	<classpathentry exported="true" kind="lib" path="/appcompat_v7_3/libs/android-support-v7-appcompat.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
