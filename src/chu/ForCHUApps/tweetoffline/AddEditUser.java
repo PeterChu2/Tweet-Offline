@@ -121,10 +121,11 @@ public class AddEditUser extends Activity
 		DatabaseConnector databaseConnector = new DatabaseConnector(this, DATABASE_NAME);
 		
 		// insert the contact information into the database
+		// initially latest tweet and bio are empty strings
 		databaseConnector.insertRecord(
 				usernameEditText.getText().toString(),
 				nameEditText.getText().toString(),
-				"");
+				"", "");
 		
 	} // end class saveContact
 	

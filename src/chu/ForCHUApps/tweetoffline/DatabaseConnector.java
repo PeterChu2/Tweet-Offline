@@ -14,7 +14,7 @@ public class DatabaseConnector {
 	private SQLiteDatabase database; // database object
 	private DatabaseOpenHelper databaseOpenHelper; // database helper
 	private String DATABASE_NAME;
-	
+
 	// public constructor for DatabaseConnector
 	public DatabaseConnector(Context context, String DATABASE_NAME) 
 	{
@@ -39,12 +39,13 @@ public class DatabaseConnector {
 	} // end method close
 
 	// inserts a new user in the database
-	public void insertRecord(String username, String name, String recentTweet)
+	public void insertRecord(String username, String name, String recentTweet, String bio)
 	{
 		ContentValues newRecord = new ContentValues();
 		newRecord.put("username", username);
 		newRecord.put("name", name);
 		newRecord.put("recentTweet", recentTweet);
+		newRecord.put("bio", bio);
 		open();
 		database.insert(DATABASE_NAME, null, newRecord);
 		close();
@@ -62,7 +63,7 @@ public class DatabaseConnector {
 	public Cursor getOneRecord(long id) 
 	{
 		return database.query(
-				DATABASE_NAME, new String[]{"username", "name", "recentTweet"}, "_id=" + id, null, null, null, null);
+				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio"}, "_id=" + id, null, null, null, null);
 	} // end method getOneRecord
 
 	public void deleteRecords()
@@ -75,8 +76,22 @@ public class DatabaseConnector {
 	// delete the user specified by the given String name
 	public void deleteRecord(long id)
 	{
+		open();
 		database.delete(DATABASE_NAME, "_id=" + id, null);
+		close();
 	} // end method deleteContact
+
+	public void updateContact(long id, String username, String name, String recentTweet, String bio) 
+	{
+		ContentValues newRecord = new ContentValues();
+		newRecord.put("username", username);
+		newRecord.put("name", name);
+		newRecord.put("recentTweet", recentTweet);
+		newRecord.put("bio", bio);
+		open(); // open the database
+		database.update("contacts", newRecord, "_id=" + id, null);
+		close(); // close the database
+	} // end method updateContact
 
 	public class DatabaseOpenHelper extends SQLiteOpenHelper 
 	{
@@ -94,7 +109,7 @@ public class DatabaseConnector {
 			// query to create a new table named contacts
 			String createQuery = "CREATE TABLE " + DATABASE_NAME +
 					"(_id integer primary key autoincrement," +
-					"username TEXT UNIQUE, name TEXT,"+" recentTweet integer);";
+					"username TEXT UNIQUE, name TEXT, recentTweet TEXT, bio TEXT);";
 			db.execSQL(createQuery); // execute the query
 		} // end method onCreate
 

@@ -998,7 +998,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f050058;
+        public static final int action_settings=0x7f05005b;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1006,7 +1006,7 @@ containing a value of this type.
         public static final int bioTableRow=0x7f05004a;
         public static final int bioTextView=0x7f05004c;
         public static final int checkbox=0x7f05002d;
-        public static final int clearList=0x7f050059;
+        public static final int clearList=0x7f05005c;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
@@ -1062,13 +1062,13 @@ containing a value of this type.
         public static final int showTitle=0x7f050006;
         public static final int split_action_bar=0x7f05001e;
         public static final int submit_area=0x7f050039;
-        public static final int subscribe=0x7f05005b;
+        public static final int subscribe=0x7f050059;
         public static final int tabMode=0x7f050002;
         public static final int title=0x7f05002b;
         public static final int top_action_bar=0x7f050020;
         public static final int twitterList=0x7f050042;
-        public static final int unfollow=0x7f05005a;
-        public static final int unsubscribe=0x7f05005c;
+        public static final int unfollow=0x7f050058;
+        public static final int unsubscribe=0x7f05005a;
         public static final int up=0x7f050021;
         public static final int useLogo=0x7f050003;
         public static final int usernameEditText=0x7f05003e;
@@ -1135,8 +1135,11 @@ containing a value of this type.
         public static final int view_user=0x7f03001c;
     }
     public static final class menu {
-        public static final int main=0x7f0c0000;
-        public static final int view_user_menu=0x7f0c0001;
+        public static final int custom_menu=0x7f0c0000;
+        public static final int follower_menu=0x7f0c0001;
+        public static final int following_menu=0x7f0c0002;
+        public static final int main=0x7f0c0003;
+        public static final int view_user_menu=0x7f0c0004;
     }
     public static final class string {
         public static final int Favorite=0x7f0a001f;
@@ -1190,6 +1193,7 @@ containing a value of this type.
         public static final int button_cancel=0x7f0a0017;
         public static final int button_delete=0x7f0a0018;
         public static final int clearList=0x7f0a0019;
+        public static final int confirm=0x7f0a002b;
         public static final int confirmMessage=0x7f0a0025;
         public static final int confirmTitle=0x7f0a0024;
         public static final int dm=0x7f0a002a;
@@ -1202,7 +1206,7 @@ containing a value of this type.
         public static final int label_latest_tweet=0x7f0a001d;
         public static final int label_name=0x7f0a001a;
         public static final int label_username=0x7f0a001c;
-        public static final int save=0x7f0a002b;
+        public static final int save=0x7f0a002c;
         public static final int subscribe=0x7f0a0026;
         public static final int title_section1=0x7f0a000e;
         public static final int title_section2=0x7f0a000f;
@@ -2462,7 +2466,7 @@ containing a value of this type.
          */
         public static final int[] MenuView = {
             0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e,
-            0x0101012f, 0x01010130, 0x01010131, 0x01010435
+            0x0101012f, 0x01010130, 0x01010131, 0x010103f8
         };
         /**
           <p>

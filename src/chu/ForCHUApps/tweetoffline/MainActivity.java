@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,16 +45,17 @@ public class MainActivity extends ActionBarActivity {
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
-	ViewPager mViewPager;
+	private ViewPager mViewPager;
 	public static final String ROW_ID = "row_id"; // Intent extra key
 	private ActionBar.TabListener tabListener;
-
+	private static int MAX_SMS_MESSAGE_LENGTH = 160;
+	private SmsManager smsManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+		smsManager = SmsManager.getDefault();
 
 		tabListener = new ActionBar.TabListener(){
 			@Override
@@ -109,8 +111,6 @@ public class MainActivity extends ActionBarActivity {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(tabListener));
 		}
-
-
 
 	}
 
@@ -292,13 +292,13 @@ public class MainActivity extends ActionBarActivity {
 						long position) 
 				{
 					// create an Intent to launch the ViewContact Activity
-					Intent viewContact = 
+					Intent viewUser = 
 							new Intent(activity, ViewUser.class);
 
 					// pass the selected contact's row ID as an extra with the Intent
-					viewContact.putExtra(ROW_ID, position);
-					viewContact.putExtra("section", section);
-					startActivity(viewContact); // start the ViewContact Activity
+					viewUser.putExtra(ROW_ID, position);
+					viewUser.putExtra("section", section);
+					startActivity(viewUser); // start the ViewContact Activity
 				} // end method onItemClick
 			}); // end viewContactListener);
 			return rootView;

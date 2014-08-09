@@ -248,7 +248,7 @@ int id action_context_bar 0x7f05001d
 int id action_menu_divider 0x7f050016
 int id action_menu_presenter 0x7f050017
 int id action_mode_close_button 0x7f050024
-int id action_settings 0x7f050058
+int id action_settings 0x7f05005b
 int id activity_chooser_view_content 0x7f050025
 int id always 0x7f05000b
 int id beginning 0x7f050011
@@ -256,7 +256,7 @@ int id bioLabelTextView 0x7f05004b
 int id bioTableRow 0x7f05004a
 int id bioTextView 0x7f05004c
 int id checkbox 0x7f05002d
-int id clearList 0x7f050059
+int id clearList 0x7f05005c
 int id collapseActionView 0x7f05000d
 int id default_activity_button 0x7f050028
 int id dialog 0x7f05000e
@@ -312,13 +312,13 @@ int id showHome 0x7f050004
 int id showTitle 0x7f050006
 int id split_action_bar 0x7f05001e
 int id submit_area 0x7f050039
-int id subscribe 0x7f05005b
+int id subscribe 0x7f050059
 int id tabMode 0x7f050002
 int id title 0x7f05002b
 int id top_action_bar 0x7f050020
 int id twitterList 0x7f050042
-int id unfollow 0x7f05005a
-int id unsubscribe 0x7f05005c
+int id unfollow 0x7f050058
+int id unsubscribe 0x7f05005a
 int id up 0x7f050021
 int id useLogo 0x7f050003
 int id usernameEditText 0x7f05003e
@@ -357,8 +357,11 @@ int layout fragment_main 0x7f030019
 int layout list_item 0x7f03001a
 int layout support_simple_spinner_dropdown_item 0x7f03001b
 int layout view_user 0x7f03001c
-int menu main 0x7f0c0000
-int menu view_user_menu 0x7f0c0001
+int menu custom_menu 0x7f0c0000
+int menu follower_menu 0x7f0c0001
+int menu following_menu 0x7f0c0002
+int menu main 0x7f0c0003
+int menu view_user_menu 0x7f0c0004
 int string Favorite 0x7f0a001f
 int string Fetch 0x7f0a0021
 int string Reply 0x7f0a001e
@@ -383,6 +386,7 @@ int string app_name 0x7f0a000d
 int string button_cancel 0x7f0a0017
 int string button_delete 0x7f0a0018
 int string clearList 0x7f0a0019
+int string confirm 0x7f0a002b
 int string confirmMessage 0x7f0a0025
 int string confirmTitle 0x7f0a0024
 int string dm 0x7f0a002a
@@ -395,7 +399,7 @@ int string label_bio 0x7f0a001b
 int string label_latest_tweet 0x7f0a001d
 int string label_name 0x7f0a001a
 int string label_username 0x7f0a001c
-int string save 0x7f0a002b
+int string save 0x7f0a002c
 int string subscribe 0x7f0a0026
 int string title_section1 0x7f0a000e
 int string title_section2 0x7f0a000f
@@ -610,7 +614,7 @@ int styleable MenuItem_android_title 7
 int styleable MenuItem_android_titleCondensed 8
 int styleable MenuItem_android_visible 4
 int styleable MenuItem_showAsAction 13
-int[] styleable MenuView { 0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e, 0x0101012f, 0x01010130, 0x01010131, 0x01010435 }
+int[] styleable MenuView { 0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e, 0x0101012f, 0x01010130, 0x01010131, 0x010103f8 }
 int styleable MenuView_android_headerBackground 4
 int styleable MenuView_android_horizontalDivider 2
 int styleable MenuView_android_itemBackground 5
