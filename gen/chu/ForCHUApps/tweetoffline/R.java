@@ -1003,7 +1003,7 @@ containing a value of this type.
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
         public static final int bioLabelTextView=0x7f05004b;
-        public static final int bioTableRow=0x7f05004a;
+        public static final int bioRow=0x7f05004a;
         public static final int bioTextView=0x7f05004c;
         public static final int checkbox=0x7f05002d;
         public static final int clearList=0x7f05005c;
@@ -1033,7 +1033,7 @@ containing a value of this type.
         public static final int middle=0x7f050012;
         public static final int nameEditText=0x7f05003f;
         public static final int nameLabelTextView=0x7f050046;
-        public static final int nameTableRow=0x7f050045;
+        public static final int nameRow=0x7f050045;
         public static final int nameTextView=0x7f050047;
         public static final int never=0x7f050009;
         public static final int newButton=0x7f050041;
@@ -1073,7 +1073,7 @@ containing a value of this type.
         public static final int useLogo=0x7f050003;
         public static final int usernameEditText=0x7f05003e;
         public static final int usernameLabelTextView=0x7f050049;
-        public static final int usernameTableRow=0x7f050048;
+        public static final int usernameRow=0x7f050048;
         public static final int usernameTextView=0x7f050044;
         public static final int whoButton=0x7f050051;
         public static final int withText=0x7f05000c;
