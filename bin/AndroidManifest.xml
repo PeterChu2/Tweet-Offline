@@ -8,6 +8,10 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/dm"
@@ -22,13 +26,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddEditUser" 
-         android:label="@string/app_name">
+        <activity
+            android:name=".AddEditUser"
+            android:label="@string/app_name" >
         </activity>
-        <activity android:name=".ViewUser"
-            android:label="@string/app_name">
+        <activity
+            android:name=".ViewUser"
+            android:label="@string/app_name" >
         </activity>
 
+<!--         <receiver android:name=".SMSReceiver" > -->
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.provider.Telephony.SMS_RECEIVED" /> -->
+<!--             </intent-filter> -->
+<!--         </receiver> -->
     </application>
 
 </manifest>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+   <item android:id="@+id/unfollow"
+      android:title="@string/unfollow" 
+      android:orderInCategory="1" android:alphabeticShortcut="u"
+      android:icon="@android:drawable/ic_delete"></item>
+   <item android:id="@+id/subscribe" 
+      android:title="@string/subscribe"
+      android:orderInCategory="2" android:alphabeticShortcut="s"
+      android:icon="@drawable/subscribe"></item>
+   <item android:id="@+id/unsubscribe"
+      android:title="@string/unsubscribe"
+      android:orderInCategory="3" android:alphabeticShortcut="n"
+      android:icon="@drawable/unsubscribe"></item>
+</menu>

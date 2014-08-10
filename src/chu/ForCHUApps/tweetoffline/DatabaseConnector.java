@@ -14,7 +14,7 @@ public class DatabaseConnector {
 	private SQLiteDatabase database; // database object
 	private DatabaseOpenHelper databaseOpenHelper; // database helper
 	private String DATABASE_NAME;
-	
+
 	// public constructor for DatabaseConnector
 	public DatabaseConnector(Context context, String DATABASE_NAME) 
 	{
@@ -39,12 +39,13 @@ public class DatabaseConnector {
 	} // end method close
 
 	// inserts a new user in the database
-	public void insertRecord(String username, String name, String recentTweet)
+	public void insertRecord(String username, String name, String recentTweet, String bio)
 	{
 		ContentValues newRecord = new ContentValues();
 		newRecord.put("username", username);
 		newRecord.put("name", name);
 		newRecord.put("recentTweet", recentTweet);
+		newRecord.put("bio", bio);
 		open();
 		database.insert(DATABASE_NAME, null, newRecord);
 		close();
@@ -62,7 +63,7 @@ public class DatabaseConnector {
 	public Cursor getOneRecord(long id) 
 	{
 		return database.query(
-				DATABASE_NAME, new String[]{"username", "name", "recentTweet"}, "_id=" + id, null, null, null, null);
+				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio"}, "_id=" + id, null, null, null, null);
 	} // end method getOneRecord
 
 	public void deleteRecords()
@@ -75,33 +76,18 @@ public class DatabaseConnector {
 	// delete the user specified by the given String name
 	public void deleteRecord(long id)
 	{
+		open();
 		database.delete(DATABASE_NAME, "_id=" + id, null);
+		close();
 	} // end method deleteContact
 
-	public class DatabaseOpenHelper extends SQLiteOpenHelper 
+	public void updateUser(long id, ContentValues cv) 
 	{
-		// public constructor
-		public DatabaseOpenHelper(Context context, String name,
-				CursorFactory factory, int version) 
-		{
-			super(context, name, factory, version);
-		} // end DatabaseOpenHelper constructor
+		
+		open(); // open the database
+		database.update(DATABASE_NAME, cv, "_id=" + id, null);
+		close(); // close the database
+	} // end method updateContact
 
-		// creates the contacts table when the database is created
-		@Override
-		public void onCreate(SQLiteDatabase db) 
-		{
-			// query to create a new table named contacts
-			String createQuery = "CREATE TABLE " + DATABASE_NAME +
-					"(_id integer primary key autoincrement," +
-					"username TEXT UNIQUE, name TEXT,"+" recentTweet integer);";
-			db.execSQL(createQuery); // execute the query
-		} // end method onCreate
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			// TODO Auto-generated method stub
-		}
-	} // end class DatabaseOpenHelper
 } // end class DatabaseConnector
 
