@@ -27,8 +27,6 @@ import android.widget.TextView;
 
 public class ViewUser extends Activity implements OnClickListener
 {
-	private Handler handler; // for displaying Toasts in the GUI thread
-
 	private long rowID; // selected contact's row ID in the database
 	private TextView nameTextView; // displays contact's name 
 	private TextView usernameTextView; // displays contact's username
@@ -102,9 +100,6 @@ public class ViewUser extends Activity implements OnClickListener
 		{
 			DATABASE_NAME = "Custom";
 		}
-		//      
-		handler = new Handler(); // create the Handler
-
 	} // end method onCreate
 	//
 	// called when the activity is first created
@@ -459,7 +454,7 @@ public class ViewUser extends Activity implements OnClickListener
 
 	} // end method deleteContact
 
-	// delete a contact
+	// Update a user
 	private void updateUser(ContentValues updateRow)
 	{
 		final DatabaseConnector databaseConnector = 
@@ -489,4 +484,3 @@ public class ViewUser extends Activity implements OnClickListener
 	} // end method deleteContact
 
 }
-

@@ -253,7 +253,7 @@ int id activity_chooser_view_content 0x7f050025
 int id always 0x7f05000b
 int id beginning 0x7f050011
 int id bioLabelTextView 0x7f05004b
-int id bioTableRow 0x7f05004a
+int id bioRow 0x7f05004a
 int id bioTextView 0x7f05004c
 int id checkbox 0x7f05002d
 int id clearList 0x7f05005c
@@ -283,7 +283,7 @@ int id list_item 0x7f050029
 int id middle 0x7f050012
 int id nameEditText 0x7f05003f
 int id nameLabelTextView 0x7f050046
-int id nameTableRow 0x7f050045
+int id nameRow 0x7f050045
 int id nameTextView 0x7f050047
 int id never 0x7f050009
 int id newButton 0x7f050041
@@ -323,7 +323,7 @@ int id up 0x7f050021
 int id useLogo 0x7f050003
 int id usernameEditText 0x7f05003e
 int id usernameLabelTextView 0x7f050049
-int id usernameTableRow 0x7f050048
+int id usernameRow 0x7f050048
 int id usernameTextView 0x7f050044
 int id whoButton 0x7f050051
 int id withText 0x7f05000c
