@@ -1206,7 +1206,8 @@ containing a value of this type.
         public static final int label_latest_tweet=0x7f0a001d;
         public static final int label_name=0x7f0a001a;
         public static final int label_username=0x7f0a001c;
-        public static final int save=0x7f0a002c;
+        public static final int save=0x7f0a002d;
+        public static final int send=0x7f0a002c;
         public static final int subscribe=0x7f0a0026;
         public static final int title_section1=0x7f0a000e;
         public static final int title_section2=0x7f0a000f;

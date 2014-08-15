@@ -25,10 +25,12 @@ public class AddEditUser extends Activity
 	private String username;
 
 
+
 	// called when the Activity is first started
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
+		
 		super.onCreate(savedInstanceState); // call super's onCreate
 		setContentView(R.layout.add_user); // inflate the UI
 

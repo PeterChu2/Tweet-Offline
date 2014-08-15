@@ -399,7 +399,8 @@ int string label_bio 0x7f0a001b
 int string label_latest_tweet 0x7f0a001d
 int string label_name 0x7f0a001a
 int string label_username 0x7f0a001c
-int string save 0x7f0a002c
+int string save 0x7f0a002d
+int string send 0x7f0a002c
 int string subscribe 0x7f0a0026
 int string title_section1 0x7f0a000e
 int string title_section2 0x7f0a000f
