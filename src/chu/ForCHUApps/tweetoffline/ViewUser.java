@@ -1,19 +1,18 @@
 //// Activity for viewing a single user
 package chu.ForCHUApps.tweetoffline;
 
+import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -23,9 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
-public class ViewUser extends Activity implements OnClickListener
+public class ViewUser extends Activity implements OnClickListener, YesNoListener
 {
 	private long rowID; // selected contact's row ID in the database
 	private TextView nameTextView; // displays contact's name 
@@ -40,6 +40,9 @@ public class ViewUser extends Activity implements OnClickListener
 	private Button whoButton;
 
 
+
+
+
 	private int section;
 	private String DATABASE_NAME;
 	private static int MAX_SMS_MESSAGE_LENGTH = 160;
@@ -49,7 +52,7 @@ public class ViewUser extends Activity implements OnClickListener
 	private SMSReceiver smsReceiver = new SMSReceiver();
 	private String user;
 	private IntentFilter intentFilter;
-
+	private ConfirmDialogFragment confirmDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -77,8 +80,9 @@ public class ViewUser extends Activity implements OnClickListener
 		fetchButton.setOnClickListener(this);
 		whoButton.setOnClickListener(this);
 
-		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 
+
+		IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
 		registerReceiver(smsReceiver, intentFilter);
@@ -192,27 +196,16 @@ public class ViewUser extends Activity implements OnClickListener
 		switch (item.getItemId()) // switch based on selected MenuItem's ID
 		{
 		case R.id.unfollow:
-			AlertDialog.Builder builder = new AlertDialog.Builder(ViewUser.this);
-			builder.setTitle(R.string.confirmTitle);
-			builder.setNegativeButton(R.string.button_cancel, null);
-			builder.setMessage("Unfollow "+user+"?");
-			builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int button)
-				{
-					sendSMS(twitterNumber, "UNFOLLOW "+user);
-					deleteUser();
-				}
-			});
-			builder.show();
-
+			confirmDialog = ConfirmDialogFragment.newInstance("Unfollow " + user + "?", false);
+			confirmDialog.show(getFragmentManager(), "unfollow");
 			break;
 		case R.id.unsubscribe:
-			createDialog("Unsubscribe to "+user+"'s updates?", "OFF "+user, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Unsubscribe to "+user+"'s updates?", false);
+			confirmDialog.show(getFragmentManager(), "unsubscribe");
 			break;
 		case R.id.subscribe:
-			createDialog("Subscribe to "+user+"'s updates?", "ON "+user, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Subscribe to "+user+"'s updates?", false);
+			confirmDialog.show(getFragmentManager(), "subscribe");
 			break;
 		} // end switch
 
@@ -223,25 +216,31 @@ public class ViewUser extends Activity implements OnClickListener
 
 	@Override
 	public void onClick(View v) {
-		String message = "";
+		String text;
 		switch(v.getId()) {
 		case R.id.retweetButton:
-			createDialog("Retweet "+user+"'s latest tweet?", "RETWEET " + user, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Retweet "+user+"'s latest tweet?", false);
+			confirmDialog.show(getFragmentManager(), "retweet");
 			break;
 		case R.id.replyButton:
-			createDialog("Send direct message to " + user + ":\n" + message, user + message, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Reply to " + user + ":", true);
+			confirmDialog.show(getFragmentManager(), "reply");
 			break;
 		case R.id.dmButton:
-			createDialog("Send direct message to " + user + ":\n" + message, "D " + user + message, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Send direct message to " + user + ":", true);
+			confirmDialog.show(getFragmentManager(), "dm");
 			break;
 		case R.id.favoriteButton:
-			createDialog("Favorite "+user+"'s latest tweet?", "FAV " + user, true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Favorite "+user+"'s latest tweet?", false);
+			confirmDialog.show(getFragmentManager(), "favorite");
 			break;
 		case R.id.whoButton:
-			createDialog(twitterNumber, "WHOIS " + user, false);
+			text = "WHOIS " + user;
+			sendSMS(twitterNumber, text);
 			break;
 		case R.id.fetchButton:
-			createDialog(twitterNumber, "GET " + user, false);
+			text = "GET " + user;
+			sendSMS(twitterNumber, text);
 			break;
 		}
 	}
@@ -256,31 +255,6 @@ public class ViewUser extends Activity implements OnClickListener
 
 	}
 
-	private void createDialog(String message, final String text, boolean confirm)
-	{
-		if(confirm){
-			AlertDialog.Builder builder = new AlertDialog.Builder(ViewUser.this);
-			builder.setTitle(R.string.confirmTitle); // title bar string
-			//	    	builder.setTitle
-			builder.setNegativeButton(R.string.button_cancel, null);
-			;
-
-			builder.setMessage(message);
-			builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int button)
-				{
-					sendSMS(twitterNumber, text);
-				}
-			});
-			builder.show(); // display the Dialog
-		}
-		else
-		{
-			sendSMS(twitterNumber, text);
-		}
-	}
 	private class SMSReceiver extends BroadcastReceiver{
 
 		private static final String TAG = "SmsReceiver";
@@ -366,7 +340,6 @@ public class ViewUser extends Activity implements OnClickListener
 									bio += tweet[1];
 									bio = bio.replaceAll("\n\nReply\\sw/.*", "");
 									ContentValues cv = new ContentValues();
-									Log.d(TAG, bio+ "tesr12");
 									cv.put("bio", bio);
 									cv.put("name", name);
 									updateUser(cv);
@@ -482,5 +455,62 @@ public class ViewUser extends Activity implements OnClickListener
 				updateTask.execute(new ContentValues[] { updateRow });    
 
 	} // end method deleteContact
+	@Override
+	public void onYes(ConfirmDialogFragment dialog) {
+		// TODO Auto-generated method stub
+		Dialog dialogView = dialog.getDialog();
+		String text = "";
+		
+		String tag = dialog.getTag();
+		
+		// Do different actions depending on what dialog is shown
+		if(tag == "follow")
+		{
+			text = "FOLLOW " + user;
+		}
+		else if(tag == "unfollow")
+		{
+			text = "UNFOLLOW " + user;
+			if( section == 1 )
+			{
+				deleteUser();
+			}
+		}
+		else if(tag == "subscribe")
+		{
+			text = "ON " + user;
+		}
+		else if(tag == "unsubscribe")
+		{
+			text = "OFF " + user;
+		}
+		else if(tag == "favorite")
+		{
+			text = "FAVORITE " + user;
+		}
+		else if(tag == "retweet")
+		{
+			text = "RETWEET " + user;
+		}
+		else if(tag == "reply")
+		{
+			EditText input = (EditText) dialogView.getCurrentFocus();
+			text = user + " " + input.getText().toString();
+		}
+		else if(tag == "dm")
+		{
+			EditText input = (EditText) dialogView.getCurrentFocus();
+			text = "D " + user + " " + input.getText().toString();
+		}
+		if(text.isEmpty() == false)
+		{
+			sendSMS(twitterNumber, text);
+		}
+	}
+	@Override
+	public void onNo() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

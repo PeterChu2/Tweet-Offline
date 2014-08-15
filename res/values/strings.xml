@@ -33,5 +33,6 @@
    <string name="whoIs">Get Bio</string>
    <string name="dm">DM</string>
    <string name="confirm">Yes</string>
+   <string name="send">Send</string>
 
 </resources>
