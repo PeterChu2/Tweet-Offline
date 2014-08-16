@@ -39,13 +39,8 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	private Button fetchButton;
 	private Button whoButton;
 
-
-
-
-
 	private int section;
 	private String DATABASE_NAME;
-	private static int MAX_SMS_MESSAGE_LENGTH = 160;
 	private static String twitterNumber = "21212";
 	private static String SENT = "SMS_SENT";
 	private static String DELIVERED = "SMS_DELIVERED";
