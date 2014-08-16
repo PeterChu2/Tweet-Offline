@@ -191,15 +191,15 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		switch (item.getItemId()) // switch based on selected MenuItem's ID
 		{
 		case R.id.unfollow:
-			confirmDialog = ConfirmDialogFragment.newInstance("Unfollow " + user + "?", false);
+			confirmDialog = ConfirmDialogFragment.newInstance("Unfollow " + user + "?", false, 0);
 			confirmDialog.show(getFragmentManager(), "unfollow");
 			break;
 		case R.id.unsubscribe:
-			confirmDialog = ConfirmDialogFragment.newInstance("Unsubscribe to "+user+"'s updates?", false);
+			confirmDialog = ConfirmDialogFragment.newInstance("Unsubscribe to "+user+"'s updates?", false, 0);
 			confirmDialog.show(getFragmentManager(), "unsubscribe");
 			break;
 		case R.id.subscribe:
-			confirmDialog = ConfirmDialogFragment.newInstance("Subscribe to "+user+"'s updates?", false);
+			confirmDialog = ConfirmDialogFragment.newInstance("Subscribe to "+user+"'s updates?", false, 0);
 			confirmDialog.show(getFragmentManager(), "subscribe");
 			break;
 		} // end switch
@@ -214,19 +214,19 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		String text;
 		switch(v.getId()) {
 		case R.id.retweetButton:
-			confirmDialog = ConfirmDialogFragment.newInstance("Retweet "+user+"'s latest tweet?", false);
+			confirmDialog = ConfirmDialogFragment.newInstance("Retweet "+user+"'s latest tweet?", false, 0);
 			confirmDialog.show(getFragmentManager(), "retweet");
 			break;
 		case R.id.replyButton:
-			confirmDialog = ConfirmDialogFragment.newInstance("Reply to " + user + ":", true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Reply to " + user + ":", true, user.length() + 1);
 			confirmDialog.show(getFragmentManager(), "reply");
 			break;
 		case R.id.dmButton:
-			confirmDialog = ConfirmDialogFragment.newInstance("Send direct message to " + user + ":", true);
+			confirmDialog = ConfirmDialogFragment.newInstance("Send direct message to " + user + ":", true, user.length() + 3);
 			confirmDialog.show(getFragmentManager(), "dm");
 			break;
 		case R.id.favoriteButton:
-			confirmDialog = ConfirmDialogFragment.newInstance("Favorite "+user+"'s latest tweet?", false);
+			confirmDialog = ConfirmDialogFragment.newInstance("Favorite "+user+"'s latest tweet?", false, 0);
 			confirmDialog.show(getFragmentManager(), "favorite");
 			break;
 		case R.id.whoButton:

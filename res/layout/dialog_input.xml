@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EditText xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialogInput"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
 
-</EditText>
+    <EditText
+        android:id="@+id/dialogInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:singleLine="false"
+        android:maxLines="4" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/characterCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialogInput"
+        android:layout_centerVertical="true"
+        android:gravity="center" >
+    </TextView>
+
+</RelativeLayout>
