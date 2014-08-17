@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,18 +49,23 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	private String user;
 	private IntentFilter intentFilter;
 	private ConfirmDialogFragment confirmDialog;
+	private ScrollingMovementMethod scrolling;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_user); // inflate GUI
+		
+		scrolling = new ScrollingMovementMethod();
 
 		// get the TextViews
 		nameTextView = (TextView) findViewById(R.id.nameTextView);
 		usernameTextView = (TextView) findViewById(R.id.usernameTextView);
 		recentTweetTextView = (TextView) findViewById(R.id.latestTweetTextView);
+		recentTweetTextView.setMovementMethod(scrolling);
 		bioTextView = (TextView) findViewById(R.id.bioTextView);
+		bioTextView.setMovementMethod(scrolling);
 
 		//get the Buttons
 		retweetButton = (Button) findViewById(R.id.retweetButton);
@@ -156,7 +162,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			usernameTextView.setText(result.getString(usernameIndex));
 			recentTweetTextView.setText(result.getString(recentTweetIndex));
 			bioTextView.setText(result.getString(bioIndex));
-			//         cityTextView.setText(result.getString(cityIndex));
 			user = result.getString(usernameIndex);
 			result.close(); // close the result cursor
 			databaseConnector.close(); // close database connection
