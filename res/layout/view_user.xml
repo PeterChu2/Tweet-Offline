@@ -69,7 +69,9 @@
             style="@style/TweetTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="7" >
+            android:layout_weight="7"
+            android:maxLines="5"
+            android:scrollbars = "vertical" >
         </TextView>
     </LinearLayout>
 
@@ -86,7 +88,9 @@
         android:id="@+id/latestTweetTextView"
         style="@style/TweetTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:maxLines="6"
+        android:layout_height="wrap_content"
+        android:scrollbars = "vertical" >
     </TextView>
 
     <RelativeLayout
