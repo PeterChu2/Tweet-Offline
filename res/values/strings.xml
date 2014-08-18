@@ -35,5 +35,7 @@
    <string name="confirm">Yes</string>
    <string name="send">Send</string>
    <string name="compose">Compose</string>
+   <string name="notifsON">Turn on all notifications</string>
+   <string name="notifsOFF">Turn off all notifications</string>
 
 </resources>

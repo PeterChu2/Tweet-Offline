@@ -1008,7 +1008,7 @@ containing a value of this type.
         public static final int bioTextView=0x7f05004e;
         public static final int characterCount=0x7f050042;
         public static final int checkbox=0x7f05002d;
-        public static final int clearList=0x7f05005f;
+        public static final int clearList=0x7f050061;
         public static final int collapseActionView=0x7f05000d;
         public static final int composeTweet=0x7f05005d;
         public static final int default_activity_button=0x7f050028;
@@ -1043,6 +1043,8 @@ containing a value of this type.
         public static final int newButton=0x7f050043;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
+        public static final int notifsOFF=0x7f050060;
+        public static final int notifsON=0x7f05005f;
         public static final int pager=0x7f05003c;
         public static final int progress_circular=0x7f050018;
         public static final int progress_horizontal=0x7f050019;
@@ -1212,7 +1214,9 @@ containing a value of this type.
         public static final int label_latest_tweet=0x7f0a001d;
         public static final int label_name=0x7f0a001a;
         public static final int label_username=0x7f0a001c;
-        public static final int save=0x7f0a002e;
+        public static final int notifsOFF=0x7f0a002f;
+        public static final int notifsON=0x7f0a002e;
+        public static final int save=0x7f0a0030;
         public static final int send=0x7f0a002c;
         public static final int subscribe=0x7f0a0026;
         public static final int title_section1=0x7f0a000e;

@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-		
+
 	}
 
 	@Override
@@ -147,7 +147,17 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		if (id == R.id.composeTweet)
 		{
 			ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Send tweet:", true, 0);
-			confirmDialog.show(getFragmentManager(), "dm");
+			confirmDialog.show(getFragmentManager(), "compose");
+		}
+		if (id == R.id.notifsOFF)
+		{
+			ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Turn off all notifications", false, 0);
+			confirmDialog.show(getFragmentManager(), "notifsOFF");
+		}
+		if (id == R.id.notifsON)
+		{
+			ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Turn on all notifications", false, 0);
+			confirmDialog.show(getFragmentManager(), "notifsON");
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -291,7 +301,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					addNewUser.putExtras(bundle);
 					startActivityForResult(addNewUser, 0); // start AddEditContact Activity
 				}
-				
+
 			});
 			listView.setOnItemClickListener(new OnItemClickListener() 
 			{
@@ -342,21 +352,21 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	// Hacky way to show overflow in actionbar menu regardless of hardware hardware button
 	private void getOverflowMenu() {
-	     try {
-	        ViewConfiguration config = ViewConfiguration.get(this);
-	        Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-	        if(menuKeyField != null) {
-	            menuKeyField.setAccessible(true);
-	            menuKeyField.setBoolean(config, false);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		try {
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+			if(menuKeyField != null) {
+				menuKeyField.setAccessible(true);
+				menuKeyField.setBoolean(config, false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	// ---sends an SMS message to another device---
 	private void sendSMS(String phoneNumber, String message) {
 
@@ -370,21 +380,38 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
-		
+
 		// Only confirm dialog is for a tweet in this activity; no need for dialog tags
 		Dialog dialogView = dialog.getDialog();
-		EditText input = (EditText) dialogView.getCurrentFocus();
-		String text = input.getText().toString();
+		String text = "";
+		String tag = dialog.getTag();
+		EditText input;
+
+		// Do different actions depending on what dialog is shown
+		if(tag == "compose")
+		{
+			input = (EditText) dialogView.getCurrentFocus();
+			text = input.getText().toString();
+		}
+		else if(tag == "notifsOFF")
+		{
+			text = "OFF";
+		}
+		else if(tag == "notifsON")
+		{
+			text = "ON";
+		}
+
 		if(text.isEmpty() == false)
 		{
 			sendSMS(twitterNumber, text);
 		}
-		
+
 	}
 
 	@Override
 	public void onNo() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
