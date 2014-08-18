@@ -794,10 +794,12 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f060002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f070003;
+        public static final int abc_search_url_text_holo=0x7f070005;
         public static final int abc_search_url_text_normal=0x7f070000;
         public static final int abc_search_url_text_pressed=0x7f070002;
         public static final int abc_search_url_text_selected=0x7f070001;
+        public static final int button_clicked=0x7f070003;
+        public static final int button_unclicked=0x7f070004;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -972,17 +974,18 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int compose_icon=0x7f020057;
-        public static final int dm=0x7f020058;
-        public static final int favorite_on=0x7f020059;
-        public static final int fetchtweet=0x7f02005a;
-        public static final int icon_httppost=0x7f02005b;
-        public static final int reply_hover=0x7f02005c;
-        public static final int retweet_on=0x7f02005d;
-        public static final int subscribe=0x7f02005e;
-        public static final int textview_border=0x7f02005f;
-        public static final int unsubscribe=0x7f020060;
-        public static final int whois=0x7f020061;
+        public static final int button_background=0x7f020057;
+        public static final int compose_icon=0x7f020058;
+        public static final int dm=0x7f020059;
+        public static final int favorite_on=0x7f02005a;
+        public static final int fetchtweet=0x7f02005b;
+        public static final int icon_httppost=0x7f02005c;
+        public static final int reply_hover=0x7f02005d;
+        public static final int retweet_on=0x7f02005e;
+        public static final int subscribe=0x7f02005f;
+        public static final int textview_border=0x7f020060;
+        public static final int unsubscribe=0x7f020061;
+        public static final int whois=0x7f020062;
     }
     public static final class id {
         public static final int BottomRowButtons=0x7f050051;
