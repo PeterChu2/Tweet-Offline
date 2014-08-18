@@ -81,9 +81,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		fetchButton.setOnClickListener(this);
 		whoButton.setOnClickListener(this);
 
-
-
-		IntentFilter intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
 		registerReceiver(smsReceiver, intentFilter);
@@ -263,7 +261,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		private String recentTweet;
 		private String[] biography;
 		private String username;
-		private String[] tweet;
+		private String[] partTwoMessage;
 		private String message;
 		private String message2;
 
@@ -298,9 +296,9 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 							if(message.startsWith("@"))
 							{
-								tweet = message.split(":[\\s]", 2);
-								username = tweet[0];
-								recentTweet = tweet[1];
+								partTwoMessage = message.split(":[\\s]", 2);
+								username = partTwoMessage[0];
+								recentTweet = partTwoMessage[1];
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
 								cv.put("username", username); //Also update username to ensure it has correct capitalization in the db
@@ -309,27 +307,27 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 							}
 							else if(message.startsWith("1/2: @"))
 							{
-								tweet = message.split(":[\\s]", 3);
+								partTwoMessage = message.split(":[\\s]", 3);
 
 								if(message2 != null)
 								{
-									recentTweet = tweet[2] + message2;
+									recentTweet = partTwoMessage[2] + message2;
 									ContentValues cv = new ContentValues();
 									cv.put("recentTweet", recentTweet);
 									updateUser(cv);
 									message2 = null;
 								}
 								else{
-									recentTweet = tweet[2];
+									recentTweet = partTwoMessage[2];
 								}
 
 							}
 							else if(message.startsWith("2/2: "))
 							{
-								tweet = message.split(":[\\s]", 2);
+								partTwoMessage = message.split(":[\\s]", 2);
 								if(recentTweet != null)
 								{
-									recentTweet += tweet[1];
+									recentTweet += partTwoMessage[1];
 									ContentValues cv = new ContentValues();
 									cv.put("recentTweet", recentTweet);
 									updateUser(cv);
@@ -337,7 +335,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 								}
 								else if(bio != null) // SMS is part 2 of fetch for bio
 								{
-									bio += tweet[1];
+									bio += partTwoMessage[1];
 									bio = bio.replaceAll("\n\nReply\\sw/.*", "");
 									ContentValues cv = new ContentValues();
 									cv.put("bio", bio);
@@ -347,7 +345,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 								}
 								else // Part 2 of the SMS is received before Part 1
 								{	
-									message2 = tweet[1];
+									message2 = partTwoMessage[1];
 								}
 							}
 
@@ -455,6 +453,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 				updateTask.execute(new ContentValues[] { updateRow });    
 
 	} // end method deleteContact
+	
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
 		// TODO Auto-generated method stub
@@ -507,6 +506,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			sendSMS(twitterNumber, text);
 		}
 	}
+	
 	@Override
 	public void onNo() {
 		// TODO Auto-generated method stub

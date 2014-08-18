@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tweet_offline="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/composeTweet"
+        android:icon="@drawable/compose_icon"
+        tweet_offline:showAsAction="always"
+        android:title="@string/compose">
     </item>
-    <item android:id="@+id/clearList"
+    <item
+        android:id="@+id/action_settings"
+        tweet_offline:showAsAction="never"
+        android:title="@string/action_settings">
+    </item>
+    <item
+        android:id="@+id/clearList"
+        tweet_offline:showAsAction="never"
         android:title="@string/clearList">
     </item>
+
 </menu>

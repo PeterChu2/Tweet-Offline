@@ -1,14 +1,16 @@
 package chu.ForCHUApps.tweetoffline;
 
+import java.lang.reflect.Field;
 import java.util.Locale;
 
+import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
+
 import android.app.Activity;
-import android.content.Context;
+import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager.OnActivityResultListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,13 +26,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements YesNoListener {
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,23 +44,23 @@ public class MainActivity extends ActionBarActivity {
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-	//	LoaderManager lm = getSupportLoaderManager();
-	//	lm.initLoader(0, this);
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager mViewPager;
 	public static final String ROW_ID = "row_id"; // Intent extra key
+	private static String SENT = "SMS_SENT";
+	private static String DELIVERED = "SMS_DELIVERED";
+	private static String twitterNumber = "21212";
 	private ActionBar.TabListener tabListener;
-	private static int MAX_SMS_MESSAGE_LENGTH = 160;
-	private SmsManager smsManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		smsManager = SmsManager.getDefault();
+		// Set the actionbar overflow
+		getOverflowMenu();
 
 		tabListener = new ActionBar.TabListener(){
 			@Override
@@ -121,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+		
 	}
 
 	@Override
@@ -134,12 +139,15 @@ public class MainActivity extends ActionBarActivity {
 		}
 		if (id == R.id.clearList)
 		{
-
 			Fragment currFragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
 			((PlaceholderFragment)currFragment).deleteRecords();
 			((PlaceholderFragment)currFragment).populateListViewFromDB();
 			return true;
-
+		}
+		if (id == R.id.composeTweet)
+		{
+			ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Send tweet:", true, 0);
+			confirmDialog.show(getFragmentManager(), "dm");
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -282,9 +290,8 @@ public class MainActivity extends ActionBarActivity {
 							new Intent(activity, AddEditUser.class);
 					addNewUser.putExtras(bundle);
 					startActivityForResult(addNewUser, 0); // start AddEditContact Activity
-
-
 				}
+				
 			});
 			listView.setOnItemClickListener(new OnItemClickListener() 
 			{
@@ -334,5 +341,50 @@ public class MainActivity extends ActionBarActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	// Hacky way to show overflow in actionbar menu regardless of hardware hardware button
+	private void getOverflowMenu() {
+	     try {
+	        ViewConfiguration config = ViewConfiguration.get(this);
+	        Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+	        if(menuKeyField != null) {
+	            menuKeyField.setAccessible(true);
+	            menuKeyField.setBoolean(config, false);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	// ---sends an SMS message to another device---
+	private void sendSMS(String phoneNumber, String message) {
+
+		PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0,new Intent(DELIVERED), 0);
+
+		SmsManager smsManager = SmsManager.getDefault();
+		smsManager.sendTextMessage(phoneNumber, null, message,null,null);// piSent, piDelivered);
+
+	}
+
+	@Override
+	public void onYes(ConfirmDialogFragment dialog) {
+		
+		// Only confirm dialog is for a tweet in this activity; no need for dialog tags
+		Dialog dialogView = dialog.getDialog();
+		EditText input = (EditText) dialogView.getCurrentFocus();
+		String text = input.getText().toString();
+		if(text.isEmpty() == false)
+		{
+			sendSMS(twitterNumber, text);
+		}
+		
+	}
+
+	@Override
+	public void onNo() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -34,5 +34,6 @@
    <string name="dm">DM</string>
    <string name="confirm">Yes</string>
    <string name="send">Send</string>
+   <string name="compose">Compose</string>
 
 </resources>
