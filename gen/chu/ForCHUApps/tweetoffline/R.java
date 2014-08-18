@@ -972,16 +972,17 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int dm=0x7f020057;
-        public static final int favorite_on=0x7f020058;
-        public static final int fetchtweet=0x7f020059;
-        public static final int icon_httppost=0x7f02005a;
-        public static final int reply_hover=0x7f02005b;
-        public static final int retweet_on=0x7f02005c;
-        public static final int subscribe=0x7f02005d;
-        public static final int textview_border=0x7f02005e;
-        public static final int unsubscribe=0x7f02005f;
-        public static final int whois=0x7f020060;
+        public static final int compose_icon=0x7f020057;
+        public static final int dm=0x7f020058;
+        public static final int favorite_on=0x7f020059;
+        public static final int fetchtweet=0x7f02005a;
+        public static final int icon_httppost=0x7f02005b;
+        public static final int reply_hover=0x7f02005c;
+        public static final int retweet_on=0x7f02005d;
+        public static final int subscribe=0x7f02005e;
+        public static final int textview_border=0x7f02005f;
+        public static final int unsubscribe=0x7f020060;
+        public static final int whois=0x7f020061;
     }
     public static final class id {
         public static final int BottomRowButtons=0x7f050051;
@@ -998,7 +999,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_settings=0x7f05005d;
+        public static final int action_settings=0x7f05005e;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
@@ -1007,8 +1008,9 @@ containing a value of this type.
         public static final int bioTextView=0x7f05004e;
         public static final int characterCount=0x7f050042;
         public static final int checkbox=0x7f05002d;
-        public static final int clearList=0x7f05005e;
+        public static final int clearList=0x7f05005f;
         public static final int collapseActionView=0x7f05000d;
+        public static final int composeTweet=0x7f05005d;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int dialogInput=0x7f050041;
@@ -1196,6 +1198,7 @@ containing a value of this type.
         public static final int button_cancel=0x7f0a0017;
         public static final int button_delete=0x7f0a0018;
         public static final int clearList=0x7f0a0019;
+        public static final int compose=0x7f0a002d;
         public static final int confirm=0x7f0a002b;
         public static final int confirmMessage=0x7f0a0025;
         public static final int confirmTitle=0x7f0a0024;
@@ -1209,7 +1212,7 @@ containing a value of this type.
         public static final int label_latest_tweet=0x7f0a001d;
         public static final int label_name=0x7f0a001a;
         public static final int label_username=0x7f0a001c;
-        public static final int save=0x7f0a002d;
+        public static final int save=0x7f0a002e;
         public static final int send=0x7f0a002c;
         public static final int subscribe=0x7f0a0026;
         public static final int title_section1=0x7f0a000e;

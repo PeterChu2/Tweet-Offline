@@ -81,8 +81,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		fetchButton.setOnClickListener(this);
 		whoButton.setOnClickListener(this);
 
-
-
 		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
@@ -455,6 +453,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 				updateTask.execute(new ContentValues[] { updateRow });    
 
 	} // end method deleteContact
+	
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
 		// TODO Auto-generated method stub
@@ -507,6 +506,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			sendSMS(twitterNumber, text);
 		}
 	}
+	
 	@Override
 	public void onNo() {
 		// TODO Auto-generated method stub
