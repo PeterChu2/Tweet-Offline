@@ -258,7 +258,7 @@ int id bioRow 0x7f05004c
 int id bioTextView 0x7f05004e
 int id characterCount 0x7f050042
 int id checkbox 0x7f05002d
-int id clearList 0x7f05005f
+int id clearList 0x7f050061
 int id collapseActionView 0x7f05000d
 int id composeTweet 0x7f05005d
 int id default_activity_button 0x7f050028
@@ -293,6 +293,8 @@ int id never 0x7f050009
 int id newButton 0x7f050043
 int id none 0x7f050010
 int id normal 0x7f050000
+int id notifsOFF 0x7f050060
+int id notifsON 0x7f05005f
 int id pager 0x7f05003c
 int id progress_circular 0x7f050018
 int id progress_horizontal 0x7f050019
@@ -405,7 +407,9 @@ int string label_bio 0x7f0a001b
 int string label_latest_tweet 0x7f0a001d
 int string label_name 0x7f0a001a
 int string label_username 0x7f0a001c
-int string save 0x7f0a002e
+int string notifsOFF 0x7f0a002f
+int string notifsON 0x7f0a002e
+int string save 0x7f0a0030
 int string send 0x7f0a002c
 int string subscribe 0x7f0a0026
 int string title_section1 0x7f0a000e

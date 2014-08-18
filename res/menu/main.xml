@@ -14,6 +14,16 @@
         android:title="@string/action_settings">
     </item>
     <item
+        android:id="@+id/notifsON"
+        tweet_offline:showAsAction="never"
+        android:title="@string/notifsON">
+    </item>
+    <item
+        android:id="@+id/notifsOFF"
+        tweet_offline:showAsAction="never"
+        android:title="@string/notifsOFF">
+    </item>
+    <item
         android:id="@+id/clearList"
         tweet_offline:showAsAction="never"
         android:title="@string/clearList">
