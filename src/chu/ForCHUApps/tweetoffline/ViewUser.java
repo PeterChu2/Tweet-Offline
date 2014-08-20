@@ -42,20 +42,20 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 	private int section;
 	private String DATABASE_NAME;
-	private static String twitterNumber = "21212";
-	private static String SENT = "SMS_SENT";
-	private static String DELIVERED = "SMS_DELIVERED";
 	private SMSReceiver smsReceiver = new SMSReceiver();
 	private String user;
 	private IntentFilter intentFilter;
 	private ConfirmDialogFragment confirmDialog;
 	private ScrollingMovementMethod scrolling;
+	private SMSHelper smsHelper;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_user); // inflate GUI
+		
+		smsHelper = new SMSHelper(this);
 		
 		scrolling = new ScrollingMovementMethod();
 
@@ -234,23 +234,13 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			break;
 		case R.id.whoButton:
 			text = "WHOIS " + user;
-			sendSMS(twitterNumber, text);
+			smsHelper.sendSMS(text);
 			break;
 		case R.id.fetchButton:
 			text = "GET " + user;
-			sendSMS(twitterNumber, text);
+			smsHelper.sendSMS(text);
 			break;
 		}
-	}
-	// ---sends an SMS message to another device---
-	private void sendSMS(String phoneNumber, String message) {
-
-		PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
-		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0,new Intent(DELIVERED), 0);
-
-		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(phoneNumber, null, message,null,null);// piSent, piDelivered);
-
 	}
 
 	private class SMSReceiver extends BroadcastReceiver{
@@ -288,7 +278,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 						SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
 						String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-						if( phoneNumber.equals(twitterNumber) )
+						if( phoneNumber.equals(SMSHelper.twitterNumber) )
 						{
 							message = currentMessage.getDisplayMessageBody();
 
@@ -503,7 +493,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		}
 		if(text.isEmpty() == false)
 		{
-			sendSMS(twitterNumber, text);
+			smsHelper.sendSMS(text);
 		}
 	}
 	
