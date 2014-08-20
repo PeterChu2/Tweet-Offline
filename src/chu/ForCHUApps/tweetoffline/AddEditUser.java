@@ -6,11 +6,8 @@ package chu.ForCHUApps.tweetoffline;
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,9 +23,7 @@ public class AddEditUser extends Activity implements YesNoListener
 	private int section;
 	private String DATABASE_NAME;
 	private String username;
-	private static String SENT = "SMS_SENT";
-	private static String DELIVERED = "SMS_DELIVERED";
-	private static String twitterNumber = "21212";
+	private SMSHelper smsHelper;
 
 	// called when the Activity is first started
 	@Override
@@ -40,6 +35,8 @@ public class AddEditUser extends Activity implements YesNoListener
 
 		nameEditText = (EditText) findViewById(R.id.nameEditText);
 		usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+		
+		smsHelper = new SMSHelper(this);
 
 		Bundle extras = getIntent().getExtras(); // get Bundle of extras
 		section = extras.getInt("section");
@@ -144,7 +141,7 @@ public class AddEditUser extends Activity implements YesNoListener
 	@Override
 	public void onYes(ConfirmDialogFragment confirmDialogFragment) {
 		// Only dialog in this activity using SMS is adding to following list
-		sendSMS(twitterNumber, "FOLLOW " + usernameEditText.getText().toString());
+		smsHelper.sendSMS("FOLLOW " + usernameEditText.getText().toString());
 		(new saveContactTask()).execute((Object[]) null); 
 	}
 
@@ -152,16 +149,6 @@ public class AddEditUser extends Activity implements YesNoListener
 	public void onNo() {
 		// TODO Auto-generated method stub
 
-	}
-
-	// ---sends an SMS message to another device---
-	private void sendSMS(String phoneNumber, String message) {
-
-		PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
-		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0,new Intent(DELIVERED), 0);
-
-		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(phoneNumber, null, message,null,null);// piSent, piDelivered);
 	}
 
 	private class saveContactTask extends AsyncTask<Object, Object, Object>

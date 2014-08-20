@@ -50,10 +50,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	 */
 	private ViewPager mViewPager;
 	public static final String ROW_ID = "row_id"; // Intent extra key
-	private static String SENT = "SMS_SENT";
-	private static String DELIVERED = "SMS_DELIVERED";
-	private static String twitterNumber = "21212";
 	private ActionBar.TabListener tabListener;
+	private SMSHelper smsHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +59,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		setContentView(R.layout.activity_main);
 		// Set the actionbar overflow
 		getOverflowMenu();
+		
+		smsHelper = new SMSHelper(this);
+		smsHelper.setTwitterNumber("21212");
 
 		tabListener = new ActionBar.TabListener(){
 			@Override
@@ -367,17 +368,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		}
 	}
 
-	// ---sends an SMS message to another device---
-	private void sendSMS(String phoneNumber, String message) {
-
-		PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
-		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0,new Intent(DELIVERED), 0);
-
-		SmsManager smsManager = SmsManager.getDefault();
-		smsManager.sendTextMessage(phoneNumber, null, message,null,null);// piSent, piDelivered);
-
-	}
-
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
 
@@ -404,7 +394,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 
 		if(text.isEmpty() == false)
 		{
-			sendSMS(twitterNumber, text);
+			smsHelper.sendSMS(text);
 		}
 
 	}
