@@ -3,17 +3,20 @@
 // editing an existing entry in the address book.
 package chu.ForCHUApps.tweetoffline;
 
+import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class AddEditUser extends Activity 
+public class AddEditUser extends Activity implements YesNoListener
 {
 	private long rowID; // id of contact being edited, if any
 
@@ -23,14 +26,15 @@ public class AddEditUser extends Activity
 	private int section;
 	private String DATABASE_NAME;
 	private String username;
-
-
+	private static String SENT = "SMS_SENT";
+	private static String DELIVERED = "SMS_DELIVERED";
+	private static String twitterNumber = "21212";
 
 	// called when the Activity is first started
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
-		
+
 		super.onCreate(savedInstanceState); // call super's onCreate
 		setContentView(R.layout.add_user); // inflate the UI
 
@@ -63,28 +67,18 @@ public class AddEditUser extends Activity
 			username = usernameEditText.getText().toString();
 			if ((username.length() != 0)&&(username.charAt(0)== '@')&&!(containsWhitespace(username)))
 			{
-
-
-				AsyncTask<Object, Object, Object> saveContactTask = 
-						new AsyncTask<Object, Object, Object>() 
-						{
-					@Override
-					protected Object doInBackground(Object... params) 
-					{
-						save(); // save contact to the database
-						return null;
-					} // end method doInBackground
-
-					@Override
-					protected void onPostExecute(Object result) 
-					{
-						setResult(Activity.RESULT_OK);
-						finish(); // return to the previous Activity
-					} // end method onPostExecute
-						}; // end AsyncTask
-
-						// save the contact to the database using a separate thread
-						saveContactTask.execute((Object[]) null); 
+				
+				if(section == 1)
+				{
+					DATABASE_NAME = "Following";
+					ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Follow " + usernameEditText.getText().toString() +"?", false, 0);
+					confirmDialog.show(getFragmentManager(), "follow");
+				}
+				else
+				{
+					// save the contact to the database using a separate thread
+					(new saveContactTask()).execute((Object[]) null); 
+				}
 
 			} // end if
 			else
@@ -118,34 +112,73 @@ public class AddEditUser extends Activity
 		{
 			DATABASE_NAME = "Custom";
 		}
-		
-		
+
+
 		DatabaseConnector databaseConnector = new DatabaseConnector(this, DATABASE_NAME);
-		
+
 		// insert the contact information into the database
 		// initially latest tweet and bio are empty strings
 		databaseConnector.insertRecord(
 				usernameEditText.getText().toString(),
 				nameEditText.getText().toString(),
 				"", "");
-		
-	} // end class saveContact
-	
-	public static boolean containsWhitespace(String str) {
-	    if (!hasLength(str)) {
-	      return false;
-	    }
-	    int strLen = str.length();
-	    for (int i = 0; i < strLen; i++) {
-	      if (Character.isWhitespace(str.charAt(i))) {
-	        return true;
-	      }
-	    }
-	    return false;
-	  }
-	public static boolean hasLength(String str) {
-	    return (str != null && str.length() > 0);
-	  }
 
-	
+	} // end class saveContact
+
+	public static boolean containsWhitespace(String str) {
+		if (!hasLength(str)) {
+			return false;
+		}
+		int strLen = str.length();
+		for (int i = 0; i < strLen; i++) {
+			if (Character.isWhitespace(str.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean hasLength(String str) {
+		return (str != null && str.length() > 0);
+	}
+
+	@Override
+	public void onYes(ConfirmDialogFragment confirmDialogFragment) {
+		// Only dialog in this activity using SMS is adding to following list
+		sendSMS(twitterNumber, "FOLLOW " + usernameEditText.getText().toString());
+		(new saveContactTask()).execute((Object[]) null); 
+	}
+
+	@Override
+	public void onNo() {
+		// TODO Auto-generated method stub
+
+	}
+
+	// ---sends an SMS message to another device---
+	private void sendSMS(String phoneNumber, String message) {
+
+		PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0,new Intent(DELIVERED), 0);
+
+		SmsManager smsManager = SmsManager.getDefault();
+		smsManager.sendTextMessage(phoneNumber, null, message,null,null);// piSent, piDelivered);
+	}
+
+	private class saveContactTask extends AsyncTask<Object, Object, Object>
+	{
+		@Override
+		protected Object doInBackground(Object... params) 
+		{
+			save(); // save contact to the database
+			return null;
+		} // end method doInBackground
+
+		@Override
+		protected void onPostExecute(Object result) 
+		{
+			setResult(Activity.RESULT_OK);
+			finish(); // return to the previous Activity
+		} // end method onPostExecute
+	}
+
 } // end class AddEditContact
