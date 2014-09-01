@@ -88,6 +88,11 @@ public class DatabaseConnector {
 		database.update(DATABASE_NAME, cv, "_id=" + id, null);
 		close(); // close the database
 	} // end method updateContact
+	
+	public String getName()
+	{
+		return DATABASE_NAME;
+	}
 
 } // end class DatabaseConnector
 

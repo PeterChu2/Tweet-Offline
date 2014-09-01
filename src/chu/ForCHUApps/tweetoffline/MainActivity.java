@@ -16,10 +16,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -214,11 +212,11 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		private DatabaseConnector database;
 		private Cursor cursor;
-		private SimpleCursorAdapter customAdapter;
+		private SimpleCustomCursorAdapter customAdapter;
 		private Activity activity;
 		private String[] from = new String[] { "username" };
 		private int[] to = new int[] { R.id.usernameTextView };
-
+		private TwitterListListener multiListener;
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -240,7 +238,13 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			super.onAttach(activity);
 			this.activity = activity;
 			Bundle bundle = this.getArguments();
-			customAdapter = new SimpleCursorAdapter(this.getActivity(), R.layout.list_item, null, from, to, 0);
+			customAdapter = new SimpleCustomCursorAdapter(this.getActivity(),
+					R.layout.list_item,
+					null,
+					from,
+					to,
+					0);
+			
 			int sectionNumber = bundle.getInt(ARG_SECTION_NUMBER);
 			if(sectionNumber == 1)
 			{
@@ -262,6 +266,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					this.database = new DatabaseConnector(activity, "Custom");
 				}
 			}
+			multiListener = new TwitterListListener(database.getName(), getActivity());
 		}
 
 		@Override
@@ -273,6 +278,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			Button newButton = (Button) rootView.findViewById(R.id.newButton);
 			ListView listView = (ListView) rootView
 					.findViewById(R.id.twitterList);
+			
+			listView.setMultiChoiceModeListener(multiListener);
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 			populateListViewFromDB();
 			listView.setAdapter(customAdapter);
 			database.close();

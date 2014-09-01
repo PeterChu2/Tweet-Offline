@@ -442,7 +442,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 				// execute the AsyncTask to delete contact at rowID
 				updateTask.execute(new ContentValues[] { updateRow });    
 
-	} // end method deleteContact
+	} // end method updateUser
 	
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
