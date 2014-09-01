@@ -54,9 +54,9 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_user); // inflate GUI
-		
+
 		smsHelper = new SMSHelper(this);
-		
+
 		scrolling = new ScrollingMovementMethod();
 
 		// get the TextViews
@@ -443,15 +443,15 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 				updateTask.execute(new ContentValues[] { updateRow });    
 
 	} // end method updateUser
-	
+
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
 		// TODO Auto-generated method stub
 		Dialog dialogView = dialog.getDialog();
 		String text = "";
-		
+
 		String tag = dialog.getTag();
-		
+
 		// Do different actions depending on what dialog is shown
 		if(tag == "follow")
 		{
@@ -462,7 +462,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			text = "UNFOLLOW " + user;
 			if( section == 1 )
 			{
-				deleteUser();
+				DatabaseActions.deleteUser(this, DATABASE_NAME, rowID, true);
 			}
 		}
 		else if(tag == "subscribe")
@@ -496,7 +496,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			smsHelper.sendSMS(text);
 		}
 	}
-	
+
 	@Override
 	public void onNo() {
 		// TODO Auto-generated method stub

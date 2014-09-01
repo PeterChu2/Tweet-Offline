@@ -8,10 +8,10 @@ import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
 public class TwitterListListener implements MultiChoiceModeListener {
-	
+
 	private String DATABASE_NAME;
 	private FragmentActivity fragmentActivity;
-	
+
 	public TwitterListListener(String DATABASE_NAME, FragmentActivity fragmentActivity)
 	{
 		this.DATABASE_NAME = DATABASE_NAME;
@@ -21,6 +21,17 @@ public class TwitterListListener implements MultiChoiceModeListener {
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		// TODO Auto-generated method stub
+		switch(item.getItemId()) {
+		case R.id.remove_entry:
+			mode.finish();
+			return true;
+		case R.id.follow_entry:
+			mode.finish();
+			return true;
+		case R.id.unfollow_entry:
+			mode.finish();
+			return true;
+		}
 		return false;
 	}
 
