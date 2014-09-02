@@ -69,11 +69,13 @@ public class DatabaseConnector {
 
 	public String getUsername(long id)
 	{
-		Cursor result = database.query(
+		Cursor result =  database.query(
 				DATABASE_NAME,
 				new String[]{"username"},
 				"_id=" + id,
 				null, null, null, null);
+		result.moveToFirst();
+		
 		return result.getString(result.getColumnIndex("username"));
 	}
 

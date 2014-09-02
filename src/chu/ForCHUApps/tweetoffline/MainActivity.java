@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -351,7 +352,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		{
 			return listView;
 		}
-		
+
 		public String getName()
 		{
 			return database.getName();
@@ -371,7 +372,15 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		public void populateListViewFromDB() {
 			database.open();
 			cursor = database.getAllRecords();
-			customAdapter.changeCursor(cursor);
+			if(cursor != null)
+			{
+				customAdapter.changeCursor(cursor);
+			}
+			else
+			{
+				customAdapter.swapCursor(null);
+			}
+				
 			customAdapter.notifyDataSetChanged();
 		}
 
@@ -429,9 +438,19 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		}
 		else if(tag == "unfollow_entries")
 		{
-			
+			SimpleCustomCursorAdapter customAdapter = currFragment.getCustomAdapter();
+			HashSet<Long> selectedIDs = customAdapter.getSelectedUserIDs();
+			for(Long id : selectedIDs){
+				DatabaseActions.sendMessage(this, currFragment.getName(), "Unfollow ", id, smsHelper);
+				if(currFragment.getName() == "Following")
+				{
+					DatabaseActions.deleteUser(this, currFragment.getName(), id, false, currFragment);
+				}
+			}
+			currFragment.populateListViewFromDB();
+			customAdapter.clearSelectionIDs();
 		}
-		if((tag == "remove_entries")||((tag == "unfollow_entries")&&(currFragment.getName() == "Following")))
+		if(tag == "remove_entries")
 		{
 			SimpleCustomCursorAdapter customAdapter = currFragment.getCustomAdapter();
 			HashSet<Long> selectedIDs = customAdapter.getSelectedUserIDs();
@@ -439,7 +458,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 				DatabaseActions.deleteUser(this, currFragment.getName(), id, false, currFragment);
 			}
 			currFragment.populateListViewFromDB();
-			
+			customAdapter.clearSelectionIDs();
+
 		}
 
 		if(text.isEmpty() == false)

@@ -30,15 +30,10 @@ public class TwitterListListener implements MultiChoiceModeListener{
 		case R.id.remove_entry:
 			confirmDialog = ConfirmDialogFragment.newInstance("Remove selected users?", false, 0);
 			confirmDialog.show(fragmentActivity.getFragmentManager(), "remove_entries");
-			mode.finish();
-			return true;
-		case R.id.follow_entry:
-			mode.finish();
 			return true;
 		case R.id.unfollow_entry:
 			confirmDialog = ConfirmDialogFragment.newInstance("Unfollow selected users?", false, 0);
 			confirmDialog.show(fragmentActivity.getFragmentManager(), "unfollow_entries");
-			mode.finish();
 			return true;
 		}
 		return false;

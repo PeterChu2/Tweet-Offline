@@ -6,15 +6,9 @@
       android:icon="@android:drawable/ic_delete"
       android:showAsAction="always|withText"></item>
    
-   <item android:id="@+id/follow_entry"
-      android:title="@string/follow"
-      android:orderInCategory="2" android:alphabeticShortcut="f"
-      android:icon="@drawable/unsubscribe"
-      android:showAsAction="always|withText"></item>
-   
    <item android:id="@+id/remove_entry" 
       android:title="@string/remove"
       android:orderInCategory="3" android:alphabeticShortcut="r"
-      android:icon="@android:drawable/ic_delete"
+      android:icon="@android:drawable/ic_menu_delete"
       android:showAsAction="always|withText"></item>
 </menu>

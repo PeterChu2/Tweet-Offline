@@ -20,7 +20,6 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
         mSelection.put(position, value);
         notifyDataSetChanged();
         selectedUserIDs.add(id);
-        Log.d("DEBUG", "asd "+ selectedUserIDs.toString());
     }
     
     public HashSet<Long> getSelectedUserIDs()
@@ -36,12 +35,16 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
     public void removeSelection(int position, long id) {
         mSelection.delete(position);//remove(position);
         notifyDataSetChanged();
-        selectedUserIDs.remove((Long) id);
+        selectedUserIDs.remove(id);
     }
 
     public void clearSelection() {
         mSelection.clear();
         notifyDataSetChanged();
+    }
+    
+    public void clearSelectionIDs() {
+    	selectedUserIDs.clear();
     }
 
 	public SimpleCustomCursorAdapter(Context context, int layout, Cursor c,
