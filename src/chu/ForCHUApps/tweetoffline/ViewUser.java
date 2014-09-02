@@ -383,38 +383,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		}
 	}
 
-	// delete a contact
-	private void deleteUser()
-	{
-
-		final DatabaseConnector databaseConnector = 
-				new DatabaseConnector(ViewUser.this, DATABASE_NAME);
-
-		// create an AsyncTask that deletes the contact in another 
-		// thread, then calls finish after the deletion
-		AsyncTask<Long, Object, Object> deleteTask =
-				new AsyncTask<Long, Object, Object>()
-				{
-			@Override
-			protected Object doInBackground(Long... params)
-			{
-				databaseConnector.deleteRecord(params[0]); 
-				return null;
-			} // end method doInBackground
-
-			@Override
-			protected void onPostExecute(Object result)
-			{
-				setResult(Activity.RESULT_OK);
-				finish(); // return to the MainActivity
-			} // end method onPostExecute
-				}; // end new AsyncTask
-
-				// execute the AsyncTask to delete contact at rowID
-				deleteTask.execute(new Long[] { rowID });    
-
-	} // end method deleteContact
-
 	// Update a user
 	private void updateUser(ContentValues updateRow)
 	{
@@ -462,7 +430,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			text = "UNFOLLOW " + user;
 			if( section == 1 )
 			{
-				DatabaseActions.deleteUser(this, DATABASE_NAME, rowID, true);
+				DatabaseActions.deleteUser(this, DATABASE_NAME, rowID, true, null);
 			}
 		}
 		else if(tag == "subscribe")

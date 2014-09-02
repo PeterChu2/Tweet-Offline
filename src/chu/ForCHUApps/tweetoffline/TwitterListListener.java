@@ -1,5 +1,6 @@
 package chu.ForCHUApps.tweetoffline;
 
+import java.util.HashMap;
 import android.support.v4.app.FragmentActivity;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -7,15 +8,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.AbsListView.MultiChoiceModeListener;
 
-public class TwitterListListener implements MultiChoiceModeListener {
+public class TwitterListListener implements MultiChoiceModeListener{
 
-	private String DATABASE_NAME;
 	private FragmentActivity fragmentActivity;
+	private ConfirmDialogFragment confirmDialog;
+	private SimpleCustomCursorAdapter customAdapter;
 
-	public TwitterListListener(String DATABASE_NAME, FragmentActivity fragmentActivity)
+	private int nr = 0;
+	
+	public TwitterListListener(String DATABASE_NAME, FragmentActivity fragmentActivity, SimpleCustomCursorAdapter customAdapter)
 	{
-		this.DATABASE_NAME = DATABASE_NAME;
 		this.fragmentActivity = fragmentActivity;
+		new SMSHelper(fragmentActivity);
+		this.customAdapter = customAdapter;
 	}
 
 	@Override
@@ -23,12 +28,16 @@ public class TwitterListListener implements MultiChoiceModeListener {
 		// TODO Auto-generated method stub
 		switch(item.getItemId()) {
 		case R.id.remove_entry:
+			confirmDialog = ConfirmDialogFragment.newInstance("Remove selected users?", false, 0);
+			confirmDialog.show(fragmentActivity.getFragmentManager(), "remove_entries");
 			mode.finish();
 			return true;
 		case R.id.follow_entry:
 			mode.finish();
 			return true;
 		case R.id.unfollow_entry:
+			confirmDialog = ConfirmDialogFragment.newInstance("Unfollow selected users?", false, 0);
+			confirmDialog.show(fragmentActivity.getFragmentManager(), "unfollow_entries");
 			mode.finish();
 			return true;
 		}
@@ -46,7 +55,8 @@ public class TwitterListListener implements MultiChoiceModeListener {
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
 		// TODO Auto-generated method stub
-
+		customAdapter.clearSelection();
+		resetCount();
 	}
 
 	@Override
@@ -58,8 +68,19 @@ public class TwitterListListener implements MultiChoiceModeListener {
 	@Override
 	public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id,
 			boolean checked) {
-		// TODO Auto-generated method stub
+        if (checked) {
+            nr++;
+            customAdapter.setNewSelection(position, id, checked);                    
+        } else {
+            nr--;
+            customAdapter.removeSelection(position, id);
+        }
+        actionMode.setTitle(nr + " selected");
 
 	}
-
+	
+	private void resetCount()
+	{
+		nr = 0;
+	}
 }

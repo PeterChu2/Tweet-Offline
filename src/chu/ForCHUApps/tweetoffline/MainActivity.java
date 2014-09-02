@@ -1,13 +1,12 @@
 package chu.ForCHUApps.tweetoffline;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Locale;
-
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +26,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -57,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		setContentView(R.layout.activity_main);
 		// Set the actionbar overflow
 		getOverflowMenu();
-		
+
 		smsHelper = new SMSHelper(this);
 		smsHelper.setTwitterNumber("21212");
 
@@ -217,10 +216,14 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		private String[] from = new String[] { "username" };
 		private int[] to = new int[] { R.id.usernameTextView };
 		private TwitterListListener multiListener;
+		private ListView listView;
 
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
+
+		public SimpleCustomCursorAdapter getCustomAdapter()
+		{
+			return customAdapter;
+		}
+
 		public static PlaceholderFragment newInstance(int sectionNumber) {
 			PlaceholderFragment fragment = new PlaceholderFragment();
 			Bundle args = new Bundle();
@@ -244,7 +247,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					from,
 					to,
 					0);
-			
+
 			int sectionNumber = bundle.getInt(ARG_SECTION_NUMBER);
 			if(sectionNumber == 1)
 			{
@@ -266,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					this.database = new DatabaseConnector(activity, "Custom");
 				}
 			}
-			multiListener = new TwitterListListener(database.getName(), getActivity());
+			multiListener = new TwitterListListener(database.getName(), getActivity(), customAdapter);
 		}
 
 		@Override
@@ -278,12 +281,25 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			Button newButton = (Button) rootView.findViewById(R.id.newButton);
 			ListView listView = (ListView) rootView
 					.findViewById(R.id.twitterList);
-			
+
+			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				@Override
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int position, long arg3) {
+					// TODO Auto-generated method stub
+
+					getListView().setItemChecked(position, !customAdapter.isPositionChecked(position));
+					return false;
+				}
+			});
 			listView.setMultiChoiceModeListener(multiListener);
 			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 			populateListViewFromDB();
 			listView.setAdapter(customAdapter);
 			database.close();
+
+			this.listView = listView;
 
 			if(section == 1)
 			{
@@ -315,20 +331,30 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			listView.setOnItemClickListener(new OnItemClickListener() 
 			{
 				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int id,
-						long position) 
+				public void onItemClick(AdapterView<?> parent, View view, int position,
+						long id) 
 				{
 					// create an Intent to launch the ViewContact Activity
 					Intent viewUser = 
 							new Intent(activity, ViewUser.class);
 
 					// pass the selected contact's row ID as an extra with the Intent
-					viewUser.putExtra(ROW_ID, position);
+					viewUser.putExtra(ROW_ID, id);
 					viewUser.putExtra("section", section);
 					startActivityForResult(viewUser, 0); // start the ViewContact Activity
 				} // end method onItemClick
 			}); // end viewContactListener);
 			return rootView;
+		}
+
+		public ListView getListView()
+		{
+			return listView;
+		}
+		
+		public String getName()
+		{
+			return database.getName();
 		}
 
 		@Override
@@ -342,7 +368,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			database.close();
 		}
 
-		private void populateListViewFromDB() {
+		public void populateListViewFromDB() {
 			database.open();
 			cursor = database.getAllRecords();
 			customAdapter.changeCursor(cursor);
@@ -384,6 +410,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		String text = "";
 		String tag = dialog.getTag();
 		EditText input;
+		PlaceholderFragment currFragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag(
+				"android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
 
 		// Do different actions depending on what dialog is shown
 		if(tag == "compose")
@@ -398,6 +426,20 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		else if(tag == "notifsON")
 		{
 			text = "ON";
+		}
+		else if(tag == "unfollow_entries")
+		{
+			
+		}
+		if((tag == "remove_entries")||((tag == "unfollow_entries")&&(currFragment.getName() == "Following")))
+		{
+			SimpleCustomCursorAdapter customAdapter = currFragment.getCustomAdapter();
+			HashSet<Long> selectedIDs = customAdapter.getSelectedUserIDs();
+			for(Long id : selectedIDs){
+				DatabaseActions.deleteUser(this, currFragment.getName(), id, false, currFragment);
+			}
+			currFragment.populateListViewFromDB();
+			
 		}
 
 		if(text.isEmpty() == false)

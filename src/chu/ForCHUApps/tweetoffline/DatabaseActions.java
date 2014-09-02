@@ -1,5 +1,6 @@
 package chu.ForCHUApps.tweetoffline;
 
+import chu.ForCHUApps.tweetoffline.MainActivity.PlaceholderFragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -7,9 +8,7 @@ import android.os.AsyncTask;
 public class DatabaseActions {
 
 	static DatabaseConnector databaseConnector;
-	private Activity activity;
-
-	public static void deleteUser(final Context context, String DATABASE_NAME, long rowID, final boolean finish)
+	public static void deleteUser(final Context context, String DATABASE_NAME, long rowID, final boolean finish, final PlaceholderFragment fragment)
 	{
 
 		databaseConnector = new DatabaseConnector(context, DATABASE_NAME);
@@ -33,7 +32,9 @@ public class DatabaseActions {
 				{
 					((Activity) context).setResult(Activity.RESULT_OK);
 					((Activity) context).finish(); // return to the MainActivity
+					return;
 				}
+				fragment.populateListViewFromDB();
 			} // end method onPostExecute
 				}; // end new AsyncTask
 
@@ -41,5 +42,5 @@ public class DatabaseActions {
 				deleteTask.execute(new Long[] { rowID });
 
 
-	} // end method deleteContact
+	} // end method deleteUser
 }
