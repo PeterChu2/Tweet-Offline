@@ -22,7 +22,6 @@
     <string name="Favorite">Favorite</string>
     <string name="Retweet">Retweet</string>
     <string name="Fetch">Fetch</string>
-    <string name="UnFollow">Unfollow</string>
     <string name="errorMessage">You must enter a valid username starting with \'@\', containing no spaces with one or more characters</string>
        <string name="confirmTitle">Are You Sure?</string>
    <string name="confirmMessage">
@@ -30,6 +29,8 @@
    <string name="subscribe">Subscribe</string>
    <string name="unsubscribe">Unsubscribe</string>
    <string name="unfollow">Unfollow</string>
+   <string name="follow">Follow</string>
+   <string name="remove">Remove</string>
    <string name="whoIs">Get Bio</string>
    <string name="dm">DM</string>
    <string name="confirm">Yes</string>

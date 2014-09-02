@@ -63,8 +63,21 @@ public class DatabaseConnector {
 	public Cursor getOneRecord(long id) 
 	{
 		return database.query(
-				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio"}, "_id=" + id, null, null, null, null);
+				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio"},
+				"_id=" + id, null, null, null, null);
 	} // end method getOneRecord
+
+	public String getUsername(long id)
+	{
+		Cursor result =  database.query(
+				DATABASE_NAME,
+				new String[]{"username"},
+				"_id=" + id,
+				null, null, null, null);
+		result.moveToFirst();
+		
+		return result.getString(result.getColumnIndex("username"));
+	}
 
 	public void deleteRecords()
 	{
@@ -83,11 +96,16 @@ public class DatabaseConnector {
 
 	public void updateUser(long id, ContentValues cv) 
 	{
-		
+
 		open(); // open the database
 		database.update(DATABASE_NAME, cv, "_id=" + id, null);
 		close(); // close the database
 	} // end method updateContact
+
+	public String getName()
+	{
+		return DATABASE_NAME;
+	}
 
 } // end class DatabaseConnector
 
