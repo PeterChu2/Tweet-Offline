@@ -35,7 +35,7 @@ public class AddEditUser extends Activity implements YesNoListener
 
 		nameEditText = (EditText) findViewById(R.id.nameEditText);
 		usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-		
+
 		smsHelper = new SMSHelper(this);
 
 		Bundle extras = getIntent().getExtras(); // get Bundle of extras
@@ -62,9 +62,12 @@ public class AddEditUser extends Activity implements YesNoListener
 		public void onClick(View v) 
 		{
 			username = usernameEditText.getText().toString();
-			if ((username.length() != 0)&&(username.charAt(0)== '@')&&!(containsWhitespace(username)))
+			if(username.charAt(0) != '@')
 			{
-				
+				username = "@" + username;
+			}
+			if ((username.length() != 0)&&!(containsWhitespace(username)))
+			{
 				if(section == 1)
 				{
 					DATABASE_NAME = "Following";
@@ -116,7 +119,7 @@ public class AddEditUser extends Activity implements YesNoListener
 		// insert the contact information into the database
 		// initially latest tweet and bio are empty strings
 		databaseConnector.insertRecord(
-				usernameEditText.getText().toString(),
+				username,
 				nameEditText.getText().toString(),
 				"", "");
 
