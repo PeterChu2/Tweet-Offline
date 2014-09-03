@@ -86,7 +86,6 @@ public class DatabaseActions {
 		databaseConnector.updateUser(rowID, updateRow);
 		if(((Activity) context).getClass().getName().equals("chu.ForCHUApps.tweetoffline.ViewUser"))
 		{
-			Log.d("DEBUG", "test");
 			((ViewUser) context).loadContacts();
 		}
 	} // end method updateUser

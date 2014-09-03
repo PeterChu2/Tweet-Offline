@@ -50,6 +50,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	public static final String ROW_ID = "row_id"; // Intent extra key
 	private ActionBar.TabListener tabListener;
 	private SMSHelper smsHelper;
+	private SMSReceiver smsReceiver;
+	private static String DATABASE_NAME;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +117,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(tabListener));
 		}
-
+		smsReceiver = new SMSReceiver(DATABASE_NAME);
 	}
 
 	@Override
@@ -252,24 +254,17 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			int sectionNumber = bundle.getInt(ARG_SECTION_NUMBER);
 			if(sectionNumber == 1)
 			{
-				if (this.database == null)
-				{
-					this.database = new DatabaseConnector(activity, "Following");
-				}
+				DATABASE_NAME = "Following";
 			}
 			if(sectionNumber == 2)
 			{
-				if (this.database == null)
-				{this.database = new DatabaseConnector(activity, "Followers");
-				}
+				DATABASE_NAME = "Followers";
 			}
 			if(sectionNumber == 3)
 			{
-				if (this.database == null)
-				{
-					this.database = new DatabaseConnector(activity, "Custom");
-				}
+				DATABASE_NAME = "Custom";
 			}
+			this.database = new DatabaseConnector(activity, DATABASE_NAME);
 			multiListener = new TwitterListListener(database.getName(), getActivity(), customAdapter);
 		}
 

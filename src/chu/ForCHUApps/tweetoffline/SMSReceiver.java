@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -21,7 +22,7 @@ public class SMSReceiver extends BroadcastReceiver{
 	private String message2;
 	private String DATABASE_NAME;
 	private long rowID;
-
+	
 	public SMSReceiver(String DATABASE_NAME, long rowID) {
 		this.DATABASE_NAME = DATABASE_NAME;
 		this.rowID = rowID;
