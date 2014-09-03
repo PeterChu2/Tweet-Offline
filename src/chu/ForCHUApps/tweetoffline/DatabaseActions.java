@@ -2,8 +2,8 @@ package chu.ForCHUApps.tweetoffline;
 
 import chu.ForCHUApps.tweetoffline.MainActivity.PlaceholderFragment;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -78,4 +78,17 @@ public class DatabaseActions {
 				// execute the AsyncTask to delete contact at rowID
 				usernameTask.execute(new Long[] { rowID });
 	}
+
+	// Update a user
+	public static void updateUser(final ContentValues updateRow, Long rowID, Context context, String DATABASE_NAME)
+	{
+		databaseConnector = new DatabaseConnector(context, DATABASE_NAME);
+		databaseConnector.updateUser(rowID, updateRow);
+		if(((Activity) context).getClass().getName().equals("chu.ForCHUApps.tweetoffline.ViewUser"))
+		{
+			Log.d("DEBUG", "test");
+			((ViewUser) context).loadContacts();
+		}
+	} // end method updateUser
+
 }

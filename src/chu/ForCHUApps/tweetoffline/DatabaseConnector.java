@@ -75,7 +75,7 @@ public class DatabaseConnector {
 				"_id=" + id,
 				null, null, null, null);
 		result.moveToFirst();
-		
+
 		return result.getString(result.getColumnIndex("username"));
 	}
 
@@ -96,7 +96,6 @@ public class DatabaseConnector {
 
 	public void updateUser(long id, ContentValues cv) 
 	{
-
 		open(); // open the database
 		database.update(DATABASE_NAME, cv, "_id=" + id, null);
 		close(); // close the database
