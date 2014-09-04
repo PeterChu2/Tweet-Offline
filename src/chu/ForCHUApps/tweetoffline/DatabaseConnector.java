@@ -112,7 +112,6 @@ public class DatabaseConnector {
 		if(username != null)
 		{
 			open();
-//			database.update(DATABASE_NAME, cv, "username=\'"+username+"\'", null);
 			database.update(DATABASE_NAME, cv, "username=?", new String[]{username});
 			close();
 		}
