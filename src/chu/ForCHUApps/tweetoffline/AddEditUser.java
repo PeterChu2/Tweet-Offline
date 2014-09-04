@@ -6,6 +6,7 @@ package chu.ForCHUApps.tweetoffline;
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,8 @@ public class AddEditUser extends Activity implements YesNoListener
 	private String DATABASE_NAME;
 	private String username;
 	private SMSHelper smsHelper;
+	private IntentFilter intentFilter;
+	private SMSReceiver smsReceiver;
 
 	// called when the Activity is first started
 	@Override
@@ -37,6 +40,7 @@ public class AddEditUser extends Activity implements YesNoListener
 		usernameEditText = (EditText) findViewById(R.id.usernameEditText);
 
 		smsHelper = new SMSHelper(this);
+//		smsReceiver = new SMSReceiver(DATABASE_NAME, null);
 
 		Bundle extras = getIntent().getExtras(); // get Bundle of extras
 		section = extras.getInt("section");
@@ -53,6 +57,14 @@ public class AddEditUser extends Activity implements YesNoListener
 		Button saveContactButton = 
 				(Button) findViewById(R.id.saveButton);
 		saveContactButton.setOnClickListener(saveButtonClicked);
+		
+		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
+		intentFilter.setPriority(999);
+		
+//		registerReceiver(smsReceiver, intentFilter);
+		
+		
 	} // end method onCreate
 
 	// responds to event generated when user clicks the Done Button

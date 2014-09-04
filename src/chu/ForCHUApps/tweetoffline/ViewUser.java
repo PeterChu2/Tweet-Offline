@@ -4,6 +4,7 @@ package chu.ForCHUApps.tweetoffline;
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -42,7 +43,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 	private int section;
 	private String DATABASE_NAME;
-	private SMSReceiver smsReceiver = new SMSReceiver();
+	private SMSReceiver smsReceiver;
 	private String user;
 	private IntentFilter intentFilter;
 	private ConfirmDialogFragment confirmDialog;
@@ -56,6 +57,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		setContentView(R.layout.view_user); // inflate GUI
 
 		smsHelper = new SMSHelper(this);
+
 
 		scrolling = new ScrollingMovementMethod();
 
@@ -84,7 +86,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
-		registerReceiver(smsReceiver, intentFilter);
+
 
 		// get the selected contact's row ID
 		Bundle extras = getIntent().getExtras();
@@ -103,6 +105,8 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		{
 			DATABASE_NAME = "Custom";
 		}
+		smsReceiver = new SMSReceiver(DATABASE_NAME, rowID);
+		registerReceiver(smsReceiver, intentFilter);
 	} // end method onCreate
 	//
 	// called when the activity is first created
@@ -124,48 +128,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	}
 
 	//   
-	// performs database query outside GUI thread
-	private class LoadContactTask extends AsyncTask<Long, Object, Cursor> 
-	{
 
-		DatabaseConnector databaseConnector = 
-				new DatabaseConnector(ViewUser.this, DATABASE_NAME);
-
-		// perform the database access
-		@Override
-		protected Cursor doInBackground(Long... params)
-		{
-			databaseConnector.open();
-
-			//          get a cursor containing all data on given entry
-			return databaseConnector.getOneRecord(params[0]);
-		} // end method doInBackground
-
-		// use the Cursor returned from the doInBackground method
-		@Override
-		protected void onPostExecute(Cursor result)
-		{
-			super.onPostExecute(result);
-
-			result.moveToFirst(); // move to the first item 
-
-			// get the column index for each data item
-			int nameIndex = result.getColumnIndex("name");
-			int usernameIndex = result.getColumnIndex("username");
-			int recentTweetIndex = result.getColumnIndex("recentTweet");
-			int bioIndex = result.getColumnIndex("bio");
-
-			// fill TextViews with the retrieved data
-			nameTextView.setText(result.getString(nameIndex));
-			usernameTextView.setText(result.getString(usernameIndex));
-			recentTweetTextView.setText(result.getString(recentTweetIndex));
-			bioTextView.setText(result.getString(bioIndex));
-			user = result.getString(usernameIndex);
-			result.close(); // close the result cursor
-			databaseConnector.close(); // close database connection
-
-		} // end method onPostExecute
-	} // end class LoadContactTask
 	//      
 	// create the Activity's menu from a menu resource XML file
 	@Override
@@ -243,175 +206,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		}
 	}
 
-	private class SMSReceiver extends BroadcastReceiver{
-
-		private static final String TAG = "SmsReceiver";
-		private String bio;
-		private String name;
-		private String recentTweet;
-		private String[] biography;
-		private String username;
-		private String[] partTwoMessage;
-		private String message;
-		private String message2;
-
-		public SMSReceiver() {
-
-		}
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// Retrieves a map of extended data from the intent.
-			//			if(intent.getAction().equals(SMS_ACTION))
-			final Bundle bundle = intent.getExtras();
-
-			try {
-
-				if (bundle != null) {
-
-					final Object[] pdusObj = (Object[]) bundle.get("pdus");
-
-					for (int i = 0; i < pdusObj.length; i++) {
-
-						// This only works on Android <= 4.3
-						this.abortBroadcast();
-
-						SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-						String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-						if( phoneNumber.equals(SMSHelper.twitterNumber) )
-						{
-							message = currentMessage.getDisplayMessageBody();
-
-							// Check all possibilities of GET command, which returns the latest tweet of a user
-
-							if(message.startsWith("@"))
-							{
-								partTwoMessage = message.split(":[\\s]", 2);
-								username = partTwoMessage[0];
-								recentTweet = partTwoMessage[1];
-								ContentValues cv = new ContentValues();
-								cv.put("recentTweet", recentTweet);
-								cv.put("username", username); //Also update username to ensure it has correct capitalization in the db
-								updateUser(cv);
-								recentTweet = null;
-							}
-							else if(message.startsWith("1/2: @"))
-							{
-								partTwoMessage = message.split(":[\\s]", 3);
-
-								if(message2 != null)
-								{
-									recentTweet = partTwoMessage[2] + message2;
-									ContentValues cv = new ContentValues();
-									cv.put("recentTweet", recentTweet);
-									updateUser(cv);
-									message2 = null;
-								}
-								else{
-									recentTweet = partTwoMessage[2];
-								}
-
-							}
-							else if(message.startsWith("2/2: "))
-							{
-								partTwoMessage = message.split(":[\\s]", 2);
-								if(recentTweet != null)
-								{
-									recentTweet += partTwoMessage[1];
-									ContentValues cv = new ContentValues();
-									cv.put("recentTweet", recentTweet);
-									updateUser(cv);
-									recentTweet = null;
-								}
-								else if(bio != null) // SMS is part 2 of fetch for bio
-								{
-									bio += partTwoMessage[1];
-									bio = bio.replaceAll("\n\nReply\\sw/.*", "");
-									ContentValues cv = new ContentValues();
-									cv.put("bio", bio);
-									cv.put("name", name);
-									updateUser(cv);
-									bio = null;
-								}
-								else // Part 2 of the SMS is received before Part 1
-								{	
-									message2 = partTwoMessage[1];
-								}
-							}
-
-							else
-							{
-								// Check if text was the WHOIS command which returns name and bio
-								biography =  message.split(".\nBio: ");
-								if(biography.length > 1)
-								{
-									// Get the first name
-									name = biography[0].split(",")[0];
-									bio = biography[1];
-
-									if(message.startsWith("1/2: ")) // Bio does not fit in one SMS
-									{
-										name = name.substring(5);
-										if(message2 != null)
-										{
-											bio += message2;
-											// Replace junk message at the end with an empty string
-											bio = bio.replaceAll("\n\nReply\\sw/.*", "");
-											ContentValues cv = new ContentValues();
-											cv.put("name", name);
-											cv.put("bio", bio);
-											Log.d(TAG, bio+ "tesr");
-											updateUser(cv);
-										}
-									}
-									else
-									{
-										ContentValues cv = new ContentValues();
-										cv.put("name", name);
-										cv.put("bio", bio);
-										updateUser(cv);
-									}
-								}
-							}
-						}
-					} // end for loop
-				} // bundle is null
-
-			} catch (Exception e) {
-				Log.e("SmsReceiver", "Exception SMSReceiver" +e);
-			}
-		}
-	}
-
-	// Update a user
-	private void updateUser(ContentValues updateRow)
-	{
-		final DatabaseConnector databaseConnector = 
-				new DatabaseConnector(ViewUser.this, DATABASE_NAME);
-
-		// create an AsyncTask that updates the contact in another 
-		AsyncTask<ContentValues, Object, Object> updateTask =
-				new AsyncTask<ContentValues, Object, Object>()
-				{
-			@Override
-			protected Object doInBackground(ContentValues... params)
-			{
-				databaseConnector.updateUser(rowID, params[0]);
-				return null;
-			} // end method doInBackground
-
-			@Override
-			protected void onPostExecute(Object result)
-			{
-				new LoadContactTask().execute(rowID);
-			} // end method onPostExecute
-				}; // end new AsyncTask
-
-				// execute the AsyncTask to delete contact at rowID
-				updateTask.execute(new ContentValues[] { updateRow });    
-
-	} // end method updateUser
-
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
 		// TODO Auto-generated method stub
@@ -470,5 +264,52 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		// TODO Auto-generated method stub
 
 	}
+
+	public void loadContacts()
+	{
+		new LoadContactTask().execute(rowID);
+	} // end method onResume
+
+	// performs database query outside GUI thread
+	private class LoadContactTask extends AsyncTask<Long, Object, Object> 
+	{
+
+		DatabaseConnector databaseConnector = 
+				new DatabaseConnector(ViewUser.this, DATABASE_NAME);
+
+		// perform the database access
+		@Override
+		protected Cursor doInBackground(Long... params)
+		{
+			databaseConnector.open();
+
+			//          get a cursor containing all data on given entry
+			return databaseConnector.getOneRecord(params[0]);
+		} // end method doInBackground
+
+		// use the Cursor returned from the doInBackground method
+		@Override
+		protected void onPostExecute(Object result)
+		{
+			super.onPostExecute(result);
+			((Cursor) result).moveToFirst(); // move to the first item 
+
+			// get the column index for each data item
+			int nameIndex = ((Cursor) result).getColumnIndex("name");
+			int usernameIndex = ((Cursor) result).getColumnIndex("username");
+			int recentTweetIndex = ((Cursor) result).getColumnIndex("recentTweet");
+			int bioIndex = ((Cursor) result).getColumnIndex("bio");
+
+			// fill TextViews with the retrieved data
+			nameTextView.setText(((Cursor) result).getString(nameIndex));
+			usernameTextView.setText(((Cursor) result).getString(usernameIndex));
+			recentTweetTextView.setText(((Cursor) result).getString(recentTweetIndex));
+			bioTextView.setText(((Cursor) result).getString(bioIndex));
+			user = ((Cursor) result).getString(usernameIndex);
+			((Cursor) result).close(); // close the result cursor
+			databaseConnector.close(); // close database connection
+
+		} // end method onPostExecute
+	} // end class LoadContactTask
 
 }
