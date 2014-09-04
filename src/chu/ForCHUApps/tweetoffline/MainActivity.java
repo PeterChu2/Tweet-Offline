@@ -8,6 +8,7 @@ import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,7 +51,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	public static final String ROW_ID = "row_id"; // Intent extra key
 	private ActionBar.TabListener tabListener;
 	private SMSHelper smsHelper;
-	private SMSReceiver smsReceiver;
 	private static String DATABASE_NAME;
 
 	@Override
@@ -117,7 +117,12 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(tabListener));
 		}
-		smsReceiver = new SMSReceiver(DATABASE_NAME);
+
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 
 	@Override
@@ -220,6 +225,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		private int[] to = new int[] { R.id.usernameTextView };
 		private TwitterListListener multiListener;
 		private ListView listView;
+		private SMSReceiver smsReceiver;
+		private IntentFilter intentFilter;
 
 
 		public SimpleCustomCursorAdapter getCustomAdapter()
@@ -236,7 +243,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		}
 
 		public PlaceholderFragment(){
-
+			intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+			// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
+			intentFilter.setPriority(999);
 		}
 
 		@Override
@@ -266,6 +275,14 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			}
 			this.database = new DatabaseConnector(activity, DATABASE_NAME);
 			multiListener = new TwitterListListener(database.getName(), getActivity(), customAdapter);
+			smsReceiver = new SMSReceiver(DATABASE_NAME, null);
+			activity.registerReceiver(smsReceiver, intentFilter);
+		}
+		
+		@Override
+		public void onDetach() {
+			super.onDetach();
+			activity.unregisterReceiver(smsReceiver);
 		}
 
 		@Override

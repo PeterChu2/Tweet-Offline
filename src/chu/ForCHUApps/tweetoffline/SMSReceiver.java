@@ -4,14 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class SMSReceiver extends BroadcastReceiver{
 
-	private static final String TAG = "SmsReceiver";
+	private static final String TAG = "DEBUG";
 	private String bio;
 	private String name;
 	private String recentTweet;
@@ -21,9 +20,9 @@ public class SMSReceiver extends BroadcastReceiver{
 	private String message;
 	private String message2;
 	private String DATABASE_NAME;
-	private long rowID;
+	private Long rowID;
 	
-	public SMSReceiver(String DATABASE_NAME, long rowID) {
+	public SMSReceiver(String DATABASE_NAME, Long rowID) {
 		this.DATABASE_NAME = DATABASE_NAME;
 		this.rowID = rowID;
 	}
@@ -67,12 +66,14 @@ public class SMSReceiver extends BroadcastReceiver{
 						else if(message.startsWith("1/2: @"))
 						{
 							partTwoMessage = message.split(":[\\s]", 3);
-
+							username = partTwoMessage[1];
+							
 							if(message2 != null)
 							{
 								recentTweet = partTwoMessage[2] + message2;
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
+								cv.put("username", username);
 								DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 								message2 = null;
 							}
@@ -89,6 +90,7 @@ public class SMSReceiver extends BroadcastReceiver{
 								recentTweet += partTwoMessage[1];
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
+								cv.put("username", username);
 								DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 								recentTweet = null;
 							}

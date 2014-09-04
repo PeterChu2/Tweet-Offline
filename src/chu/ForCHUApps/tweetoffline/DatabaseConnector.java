@@ -5,12 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DatabaseConnector {
 
+	private static final String TAG = "DEBUG";
 	private SQLiteDatabase database; // database object
 	private DatabaseOpenHelper databaseOpenHelper; // database helper
 	private String DATABASE_NAME;
@@ -97,13 +96,26 @@ public class DatabaseConnector {
 	public void updateUser(long id, ContentValues cv) 
 	{
 		open(); // open the database
-		database.update(DATABASE_NAME, cv, "_id=" + id, null);
+		database.update(DATABASE_NAME, cv, "_id=?", new String[]{String.valueOf(id)});
 		close(); // close the database
 	} // end method updateContact
 
 	public String getName()
 	{
 		return DATABASE_NAME;
+	}
+
+	public void updateUserByUsername(ContentValues cv) {
+		// TODO Auto-generated method stub
+		String username;
+		username = cv.getAsString("username");
+		if(username != null)
+		{
+			open();
+//			database.update(DATABASE_NAME, cv, "username=\'"+username+"\'", null);
+			database.update(DATABASE_NAME, cv, "username=?", new String[]{username});
+			close();
+		}
 	}
 
 } // end class DatabaseConnector
