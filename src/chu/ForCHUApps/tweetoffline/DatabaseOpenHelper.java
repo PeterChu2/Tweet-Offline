@@ -5,30 +5,31 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper 
-	{
+{
 	private String DATABASE_NAME;
-		// public constructor
-		public DatabaseOpenHelper(Context context, String name,
-				CursorFactory factory, int version) 
-		{
-			
-			super(context, name, factory, version);
-			DATABASE_NAME = name;
-		} // end DatabaseOpenHelper constructor
+	// public constructor
+	public DatabaseOpenHelper(Context context, String name,
+			CursorFactory factory, int version) 
+	{
 
-		// creates the contacts table when the database is created
-		@Override
-		public void onCreate(SQLiteDatabase db) 
-		{
-			// query to create a new table named contacts
-			String createQuery = "CREATE TABLE " + DATABASE_NAME +
-					"(_id integer primary key autoincrement," +
-					"username TEXT UNIQUE, name TEXT, recentTweet TEXT, bio TEXT);";
-			db.execSQL(createQuery); // execute the query
-		} // end method onCreate
+		super(context, name, factory, version);
+		DATABASE_NAME = name;
+	} // end DatabaseOpenHelper constructor
 
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			// TODO Auto-generated method stub
-		}
-	} // end class DatabaseOpenHelper
+	// creates the contacts table when the database is created
+	@Override
+	public void onCreate(SQLiteDatabase db) 
+	{
+		// query to create a new table named contacts
+		String createQuery = "CREATE TABLE " + DATABASE_NAME +
+				"(_id integer primary key autoincrement," +
+				"username TEXT UNIQUE, name TEXT," +
+				" recentTweet TEXT, bio TEXT, tweetDate INTEGER);";
+		db.execSQL(createQuery); // execute the query
+	} // end method onCreate
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// TODO Auto-generated method stub
+	}
+} // end class DatabaseOpenHelper

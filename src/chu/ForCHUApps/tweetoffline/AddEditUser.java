@@ -32,7 +32,6 @@ public class AddEditUser extends Activity implements YesNoListener
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
-
 		super.onCreate(savedInstanceState); // call super's onCreate
 		setContentView(R.layout.add_user); // inflate the UI
 
@@ -40,10 +39,23 @@ public class AddEditUser extends Activity implements YesNoListener
 		usernameEditText = (EditText) findViewById(R.id.usernameEditText);
 
 		smsHelper = new SMSHelper(this);
-//		smsReceiver = new SMSReceiver(DATABASE_NAME, null);
 
 		Bundle extras = getIntent().getExtras(); // get Bundle of extras
 		section = extras.getInt("section");
+		
+		//Determine what list the activity is using
+		if(section == 1)
+		{
+			DATABASE_NAME = "Following";
+		}
+		else if(section == 2)
+		{
+			DATABASE_NAME = "Followers";
+		}
+		else if(section == 3)
+		{
+			DATABASE_NAME = "Custom";
+		}
 
 		// if there are extras, use them to populate the EditTexts
 		if (extras != null)
@@ -62,10 +74,18 @@ public class AddEditUser extends Activity implements YesNoListener
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
 		
-//		registerReceiver(smsReceiver, intentFilter);
+		smsReceiver = new SMSReceiver(DATABASE_NAME, null);
+		registerReceiver(smsReceiver, intentFilter);
 		
 		
 	} // end method onCreate
+	
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		unregisterReceiver(smsReceiver);
+	}
 
 	// responds to event generated when user clicks the Done Button
 	OnClickListener saveButtonClicked = new OnClickListener() 
@@ -112,19 +132,6 @@ public class AddEditUser extends Activity implements YesNoListener
 	private void save() 
 	{
 		// get DatabaseConnector to interact with the SQLite database
-		if(section == 1)
-		{
-			DATABASE_NAME = "Following";
-		}
-		else if(section == 2)
-		{
-			DATABASE_NAME = "Followers";
-		}
-		else if(section == 3)
-		{
-			DATABASE_NAME = "Custom";
-		}
-
 
 		DatabaseConnector databaseConnector = new DatabaseConnector(this, DATABASE_NAME);
 
