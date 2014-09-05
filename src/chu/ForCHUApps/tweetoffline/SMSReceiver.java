@@ -21,6 +21,7 @@ public class SMSReceiver extends BroadcastReceiver{
 	private String message2;
 	private String DATABASE_NAME;
 	private Long rowID;
+	private String timeStamp;
 	
 	public SMSReceiver(String DATABASE_NAME, Long rowID) {
 		this.DATABASE_NAME = DATABASE_NAME;
@@ -58,6 +59,8 @@ public class SMSReceiver extends BroadcastReceiver{
 							username = partTwoMessage[0];
 							recentTweet = partTwoMessage[1];
 							ContentValues cv = new ContentValues();
+							timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
+							recentTweet = recentTweet.replace(timeStamp, "");
 							cv.put("recentTweet", recentTweet);
 							cv.put("username", username); //Also update username to ensure it has correct capitalization in the db
 							DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
@@ -71,6 +74,8 @@ public class SMSReceiver extends BroadcastReceiver{
 							if(message2 != null)
 							{
 								recentTweet = partTwoMessage[2] + message2;
+								timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
+								recentTweet = recentTweet.replace(timeStamp, "");
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
 								cv.put("username", username);
@@ -88,6 +93,8 @@ public class SMSReceiver extends BroadcastReceiver{
 							if(recentTweet != null)
 							{
 								recentTweet += partTwoMessage[1];
+								timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
+								recentTweet = recentTweet.replace(timeStamp, "");
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
 								cv.put("username", username);
