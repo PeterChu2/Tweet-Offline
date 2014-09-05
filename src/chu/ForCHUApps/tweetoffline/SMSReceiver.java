@@ -1,11 +1,15 @@
 package chu.ForCHUApps.tweetoffline;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.text.format.Time;
 import android.util.Log;
 
 public class SMSReceiver extends BroadcastReceiver{
@@ -22,7 +26,12 @@ public class SMSReceiver extends BroadcastReceiver{
 	private String DATABASE_NAME;
 	private Long rowID;
 	private String timeStamp;
-	
+	private Pattern p = Pattern.compile("(\\d+)");
+	private Matcher m;
+	private Time tweetTime;
+	private long timeInMillis;
+	private Time tweetDate;
+
 	public SMSReceiver(String DATABASE_NAME, Long rowID) {
 		this.DATABASE_NAME = DATABASE_NAME;
 		this.rowID = rowID;
@@ -30,8 +39,7 @@ public class SMSReceiver extends BroadcastReceiver{
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		// Retrieves a map of extended data from the intent.
-		//			if(intent.getAction().equals(SMS_ACTION))
+
 		final Bundle bundle = intent.getExtras();
 
 		try {
@@ -59,9 +67,17 @@ public class SMSReceiver extends BroadcastReceiver{
 							username = partTwoMessage[0];
 							recentTweet = partTwoMessage[1];
 							ContentValues cv = new ContentValues();
+
 							timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
-							recentTweet = recentTweet.replace(timeStamp, "");
+
+							tweetDate = parseDate(timeStamp);
+
+							// Replace twitter's relative time stamp in the text with an a static date
+							recentTweet = recentTweet.replace(timeStamp, getFormattedDate());
+							// "\n(" + //tweetDate.format("%Y-%m-%d around %l:%M %p") +")" );
+
 							cv.put("recentTweet", recentTweet);
+							cv.put("tweetDate", tweetDate.toMillis(false));
 							cv.put("username", username); //Also update username to ensure it has correct capitalization in the db
 							DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 							recentTweet = null;
@@ -70,14 +86,20 @@ public class SMSReceiver extends BroadcastReceiver{
 						{
 							partTwoMessage = message.split(":[\\s]", 3);
 							username = partTwoMessage[1];
-							
+
 							if(message2 != null)
 							{
 								recentTweet = partTwoMessage[2] + message2;
 								timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
-								recentTweet = recentTweet.replace(timeStamp, "");
+
+								tweetDate = parseDate(timeStamp);
+
+								// Replace twitter's relative time stamp in the text with an a static date
+								recentTweet = recentTweet.replace(timeStamp, getFormattedDate());
+
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
+								cv.put("tweetDate", tweetDate.toMillis(false));
 								cv.put("username", username);
 								DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 								message2 = null;
@@ -94,9 +116,15 @@ public class SMSReceiver extends BroadcastReceiver{
 							{
 								recentTweet += partTwoMessage[1];
 								timeStamp = recentTweet.substring(recentTweet.lastIndexOf('('));
-								recentTweet = recentTweet.replace(timeStamp, "");
+
+								tweetDate = parseDate(timeStamp);
+
+								// Replace twitter's relative time stamp in the text with an a static date
+								recentTweet = recentTweet.replace(timeStamp, getFormattedDate());
+
 								ContentValues cv = new ContentValues();
 								cv.put("recentTweet", recentTweet);
+								cv.put("tweetDate", tweetDate.toMillis(false));
 								cv.put("username", username);
 								DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 								recentTweet = null;
@@ -157,6 +185,57 @@ public class SMSReceiver extends BroadcastReceiver{
 		} catch (Exception e) {
 			Log.e("SmsReceiver", "Exception SMSReceiver" + e);
 		}
+	}
+
+	private Time parseDate(String timeStamp)
+	{
+		m = p.matcher(timeStamp);
+
+		if (m.find()) 
+		{
+			long conversionFactor = 1;
+			tweetTime = new Time();
+			tweetTime.setToNow();
+			timeInMillis = tweetTime.toMillis(false);
+			if(timeStamp.contains("minute"))
+			{
+				conversionFactor = 60*1000;
+			}
+			else if(timeStamp.contains("second"))
+			{
+				conversionFactor = 1000;
+			}
+			else if(timeStamp.contains("hour"))
+			{
+				conversionFactor = 60*60*1000;
+			}
+			else if(timeStamp.contains("day"))
+			{
+				conversionFactor = 24*60*60*1000;
+			}
+			else if(timeStamp.contains("month"))
+			{
+				conversionFactor = 30*24*60*60*1000;
+			}
+			else if(timeStamp.contains("year"))
+			{
+				conversionFactor = 365*30*24*60*60*1000;
+			}
+
+			// Calculate the time the actual tweet was sent
+			// m.group(0) refers to the full regex match of the number
+			timeInMillis -= conversionFactor*Integer.parseInt(m.group(0));
+
+			tweetTime.set(timeInMillis);
+
+			return tweetTime;
+		}
+		return null;
+	}
+
+	private String getFormattedDate()
+	{
+		return "\n(" + tweetDate.format("%Y-%m-%d around %l:%M %p") +")";
 	}
 }
 
