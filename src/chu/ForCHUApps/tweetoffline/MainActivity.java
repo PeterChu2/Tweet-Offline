@@ -6,9 +6,13 @@ import java.util.Locale;
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,6 +56,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	private ActionBar.TabListener tabListener;
 	private SMSHelper smsHelper;
 	private static String DATABASE_NAME;
+	private SharedPreferences sharedPreferences;
+	private String twitterNumberKey = "chu.ForCHUApps.tweetoffline";
+	private String twitterNumber;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +67,21 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		// Set the actionbar overflow
 		getOverflowMenu();
 
+		// Get sharedPreferences with the User's twitter Number
+		sharedPreferences = this.getSharedPreferences(
+				"chu.ForCHUApps.tweetoffline", Context.MODE_PRIVATE);
+
 		smsHelper = new SMSHelper(this);
-		smsHelper.setTwitterNumber("21212");
+		
+		if(sharedPreferences.contains(twitterNumberKey))
+		{
+			twitterNumber = sharedPreferences.getString(twitterNumberKey, null);
+			smsHelper.setTwitterNumber(twitterNumber);
+		}
+		else
+		{
+			setTwitterNumber();
+		}
 
 		tabListener = new ActionBar.TabListener(){
 			@Override
@@ -119,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		}
 
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -278,7 +298,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			smsReceiver = new SMSReceiver(DATABASE_NAME, null);
 			activity.registerReceiver(smsReceiver, intentFilter);
 		}
-		
+
 		@Override
 		public void onDetach() {
 			super.onDetach();
@@ -392,7 +412,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			{
 				customAdapter.swapCursor(null);
 			}
-				
+
 			customAdapter.notifyDataSetChanged();
 		}
 
@@ -479,6 +499,37 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			smsHelper.sendSMS(text);
 		}
 
+	}
+
+	private void setTwitterNumber()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Configure Twitter shortcode");
+		alert.setMessage("Set the twitter shortcode for your country and mobile operator." +
+				" These values can be found on: https://support.twitter.com/articles/20170024." +
+				"\nU.S. shortcode: 40404\nCanada shortcode: 21212");
+
+		// Set an EditText view to get user input 
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String shortCode = input.getText().toString();
+				sharedPreferences.edit().putString(twitterNumberKey, shortCode ).apply();
+				twitterNumber = shortCode;
+				smsHelper.setTwitterNumber(twitterNumber);
+			}
+		});
+
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				// Canceled.
+			}
+		});
+
+		alert.show();
 	}
 
 	@Override
