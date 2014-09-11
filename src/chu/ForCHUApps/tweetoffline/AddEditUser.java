@@ -75,15 +75,20 @@ public class AddEditUser extends Activity implements YesNoListener
 		intentFilter.setPriority(999);
 		
 		smsReceiver = new SMSReceiver(DATABASE_NAME, null);
-		registerReceiver(smsReceiver, intentFilter);
-		
 		
 	} // end method onCreate
 	
 	@Override
-	protected void onDestroy()
+	protected void onResume()
 	{
-		super.onDestroy();
+		super.onResume();
+		registerReceiver(smsReceiver, intentFilter);
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
 		unregisterReceiver(smsReceiver);
 	}
 

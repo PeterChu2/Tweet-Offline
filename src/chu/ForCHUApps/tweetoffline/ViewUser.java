@@ -106,7 +106,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			DATABASE_NAME = "Custom";
 		}
 		smsReceiver = new SMSReceiver(DATABASE_NAME, rowID);
-		registerReceiver(smsReceiver, intentFilter);
+		
 	} // end method onCreate
 	//
 	// called when the activity is first created
@@ -114,22 +114,19 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	protected void onResume()
 	{
 		super.onResume();
-
-
+		registerReceiver(smsReceiver, intentFilter);
 		// create new LoadContactTask and execute it 
 		new LoadContactTask().execute(rowID);
 
 	} // end method onResume
-
+	
 	@Override
-	protected void onDestroy(){
-		super.onDestroy();
+	protected void onStop()
+	{
+		super.onStop();
 		unregisterReceiver(smsReceiver);
 	}
 
-	//   
-
-	//      
 	// create the Activity's menu from a menu resource XML file
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
