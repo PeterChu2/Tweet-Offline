@@ -41,6 +41,7 @@ import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements YesNoListener{
 
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -59,8 +60,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	private SMSHelper smsHelper;
 	private static String DATABASE_NAME;
 	private SharedPreferences sharedPreferences;
-	private String twitterNumberKey = "edittext_twitter_number";
 	private String twitterNumber;
+	private static final String twitterNumberKey = "edittext_twitter_number";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -453,10 +454,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-			loadPref();
-	    
-		
-	       
 	}
 
 	// Hacky way to show overflow in actionbar menu regardless of hardware hardware button
@@ -536,13 +533,4 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// TODO Auto-generated method stub
 	}
 	
-	private void loadPref(){
-		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		String newShortCode = mySharedPreferences.getString(twitterNumberKey, null);
-		if((newShortCode != null) && (newShortCode != twitterNumber))
-		{
-			twitterNumber = newShortCode;
-			smsHelper.setTwitterNumber(twitterNumber);
-		}
-	}
 }
