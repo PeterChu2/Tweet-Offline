@@ -1,6 +1,6 @@
 package chu.ForCHUApps.tweetoffline;
 
-import chu.ForCHUApps.tweetoffline.MainActivity.PlaceholderFragment;
+import chu.ForCHUApps.tweetoffline.MainActivity.TwitterListFragment;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,7 +11,7 @@ public class DatabaseActions {
 
 	private static final String TAG = "DEBUG";
 	static DatabaseConnector databaseConnector;
-	public static void deleteUser(final Context context, String DATABASE_NAME, long rowID, final boolean finish, final PlaceholderFragment fragment)
+	public static void deleteUser(final Context context, String DATABASE_NAME, long rowID, final boolean finish, final TwitterListFragment fragment)
 	{
 		databaseConnector = new DatabaseConnector(context, DATABASE_NAME);
 

@@ -38,5 +38,16 @@
    <string name="compose">Compose</string>
    <string name="notifsON">Turn on all notifications</string>
    <string name="notifsOFF">Turn off all notifications</string>
-
+   <string name="configuration">Configuration</string>
+   <string name="set_twitter_number">Configure Twitter shortcode</string>
+   <string name="twitter_number_desc">Set your Twitter ShortCode</string>
+   <string name="signUp">Sign Up</string>
+   <string name="account_settings">Account Settings</string>
+   <string name="set_status">Set Profile Biography</string>
+   <string name="set_status_desc">Set Your Twitter Profile Bio</string>
+   <string name="set_location">Set Profile Location</string>
+   <string name="set_location_desc">Set Your Twitter Profile Location</string>
+   <string name="countryShortCodesSummary">View the list of Twitter Short Codes in your browser</string>
+   <string name="countryShortCodes">Find Your Twitter Short Code</string>
+   <string name="signUp_desc">Get started with using Twitter\'s SMS service"</string>
 </resources>
