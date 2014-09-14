@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class DatabaseActions {
 
-	private static final String TAG = "DEBUG";
 	static DatabaseConnector databaseConnector;
 	public static void deleteUser(final Context context, String DATABASE_NAME, long rowID, final boolean finish, final TwitterListFragment fragment)
 	{
@@ -85,12 +83,15 @@ public class DatabaseActions {
 		databaseConnector = new DatabaseConnector(context, DATABASE_NAME);
 		if(rowID != null)
 		{
+			// User selected an item with a rowID
 			databaseConnector.updateUser(rowID, updateRow);
 		}
 		else
 		{
+			// Tweet received with username
 			databaseConnector.updateUserByUsername(updateRow);
 		}
+		// Reload User info into the layout if the activity is .ViewUser
 		if(((Activity) context).getClass().getName().equals("chu.ForCHUApps.tweetoffline.ViewUser"))
 		{
 			((ViewUser) context).loadContacts();

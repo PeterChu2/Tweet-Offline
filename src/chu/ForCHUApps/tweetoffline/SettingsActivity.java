@@ -1,12 +1,7 @@
 package chu.ForCHUApps.tweetoffline;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class SettingsActivity extends Activity{
 

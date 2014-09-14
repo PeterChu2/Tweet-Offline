@@ -4,20 +4,11 @@ package chu.ForCHUApps.tweetoffline;
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -205,7 +196,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 	@Override
 	public void onYes(ConfirmDialogFragment dialog) {
-		// TODO Auto-generated method stub
 		Dialog dialogView = dialog.getDialog();
 		String text = "";
 
@@ -258,8 +248,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 	@Override
 	public void onNo() {
-		// TODO Auto-generated method stub
-
+		// NOOP
 	}
 
 	public void loadContacts()

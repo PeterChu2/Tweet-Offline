@@ -5,11 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class DatabaseConnector {
 
-	private static final String TAG = "DEBUG";
 	private SQLiteDatabase database; // database object
 	private DatabaseOpenHelper databaseOpenHelper; // database helper
 	private String DATABASE_NAME;
@@ -93,6 +91,7 @@ public class DatabaseConnector {
 		close();
 	} // end method deleteContact
 
+	// Update user data by row ID
 	public void updateUser(long id, ContentValues cv) 
 	{
 		open(); // open the database
@@ -105,8 +104,8 @@ public class DatabaseConnector {
 		return DATABASE_NAME;
 	}
 
+	// Update user data by username in text
 	public void updateUserByUsername(ContentValues cv) {
-		// TODO Auto-generated method stub
 		String username;
 		username = cv.getAsString("username");
 		if(username != null)

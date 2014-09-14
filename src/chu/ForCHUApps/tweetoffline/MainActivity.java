@@ -8,12 +8,10 @@ import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,7 +22,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// Get sharedPreferences with the User's twitter short code if it exists
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		smsHelper = new SMSHelper(this);
-		
+
 		if(sharedPreferences.contains(twitterNumberKey))
 		{
 			twitterNumber = sharedPreferences.getString(twitterNumberKey, null);
@@ -159,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	protected void onResume() {
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -181,12 +178,12 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-//			preferenceFragment = new TwitterPreferenceFragment();
-//	        getFragmentManager().beginTransaction().replace(android.R.id.content,
-//	        		preferenceFragment).commit();
+			//			preferenceFragment = new TwitterPreferenceFragment();
+			//	        getFragmentManager().beginTransaction().replace(android.R.id.content,
+			//	        		preferenceFragment).commit();
 			Intent intent = new Intent();
-	        intent.setClass(MainActivity.this, SettingsActivity.class);
-	        startActivityForResult(intent, 0); 
+			intent.setClass(MainActivity.this, SettingsActivity.class);
+			startActivityForResult(intent, 0); 
 			return true;
 		}
 		if (id == R.id.clearList)
@@ -253,15 +250,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		}
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
+	// Fragments representing the lists
 	public static class TwitterListFragment extends Fragment
 	{
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		private DatabaseConnector database;
 		private Cursor cursor;
@@ -299,6 +290,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			super.onAttach(activity);
 			this.activity = activity;
 			Bundle bundle = this.getArguments();
+
+			// Map layout items to data
 			customAdapter = new SimpleCustomCursorAdapter(this.getActivity(),
 					R.layout.list_item,
 					null,
@@ -346,12 +339,12 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 				@Override
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						int position, long arg3) {
-					// TODO Auto-generated method stub
 
 					getListView().setItemChecked(position, !customAdapter.isPositionChecked(position));
 					return false;
 				}
 			});
+			// Allow for selecting multiple entries in contextual menu
 			listView.setMultiChoiceModeListener(multiListener);
 			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 			populateListViewFromDB();
@@ -421,13 +414,14 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			super.onResume();
 		}
 
+		// Refresh list when returning from another activity
 		public void onActivityResult(int requestcode, int resultCode, Intent data)
 		{
 			populateListViewFromDB();
 			database.close();
 		}
-		
 
+		// Refreshes the ListView from the database
 		public void populateListViewFromDB() {
 			database.open();
 			cursor = database.getAllRecords();
@@ -443,6 +437,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			customAdapter.notifyDataSetChanged();
 		}
 
+		// Deletes all users in the current list
 		private void deleteRecords(){
 			database.open();
 			database.deleteRecords();
@@ -506,6 +501,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 					DatabaseActions.deleteUser(this, currFragment.getName(), id, false, currFragment);
 				}
 			}
+			// Refresh list
 			currFragment.populateListViewFromDB();
 			customAdapter.clearSelectionIDs();
 		}
@@ -513,9 +509,11 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		{
 			SimpleCustomCursorAdapter customAdapter = currFragment.getCustomAdapter();
 			HashSet<Long> selectedIDs = customAdapter.getSelectedUserIDs();
+			// Remove multiple entries
 			for(Long id : selectedIDs){
 				DatabaseActions.deleteUser(this, currFragment.getName(), id, false, currFragment);
 			}
+			// Refresh list
 			currFragment.populateListViewFromDB();
 			customAdapter.clearSelectionIDs();
 
@@ -530,7 +528,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 	@Override
 	public void onNo() {
-		// TODO Auto-generated method stub
+		// NOOP
 	}
-	
+
 }

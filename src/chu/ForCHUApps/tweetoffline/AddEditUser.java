@@ -16,8 +16,6 @@ import android.widget.EditText;
 
 public class AddEditUser extends Activity implements YesNoListener
 {
-	private long rowID; // id of contact being edited, if any
-
 	// EditTexts for contact information
 	private EditText nameEditText;
 	private EditText usernameEditText;
@@ -28,7 +26,6 @@ public class AddEditUser extends Activity implements YesNoListener
 	private IntentFilter intentFilter;
 	private SMSReceiver smsReceiver;
 
-	// called when the Activity is first started
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
@@ -60,7 +57,7 @@ public class AddEditUser extends Activity implements YesNoListener
 		// if there are extras, use them to populate the EditTexts
 		if (extras != null)
 		{
-			rowID = extras.getLong("row_id");
+			extras.getLong("row_id");
 			nameEditText.setText(extras.getString("name"));  
 			usernameEditText.setText(extras.getString("username"));
 		} // end if
@@ -174,8 +171,7 @@ public class AddEditUser extends Activity implements YesNoListener
 
 	@Override
 	public void onNo() {
-		// TODO Auto-generated method stub
-
+		// NOOP
 	}
 
 	private class saveContactTask extends AsyncTask<Object, Object, Object>

@@ -1,6 +1,5 @@
 package chu.ForCHUApps.tweetoffline;
 
-import java.util.HashMap;
 import android.support.v4.app.FragmentActivity;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -15,7 +14,7 @@ public class TwitterListListener implements MultiChoiceModeListener{
 	private SimpleCustomCursorAdapter customAdapter;
 
 	private int nr = 0;
-	
+
 	public TwitterListListener(String DATABASE_NAME, FragmentActivity fragmentActivity, SimpleCustomCursorAdapter customAdapter)
 	{
 		this.fragmentActivity = fragmentActivity;
@@ -25,7 +24,6 @@ public class TwitterListListener implements MultiChoiceModeListener{
 
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		// TODO Auto-generated method stub
 		switch(item.getItemId()) {
 		case R.id.remove_entry:
 			confirmDialog = ConfirmDialogFragment.newInstance("Remove selected users?", false, 0);
@@ -41,7 +39,6 @@ public class TwitterListListener implements MultiChoiceModeListener{
 
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		// TODO Auto-generated method stub
 		MenuInflater inflater = fragmentActivity.getMenuInflater();
 		inflater.inflate(R.menu.contextual_action_bar_menu, menu);
 		return true;
@@ -49,31 +46,29 @@ public class TwitterListListener implements MultiChoiceModeListener{
 
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
-		// TODO Auto-generated method stub
 		customAdapter.clearSelection();
 		resetCount();
 	}
 
 	@Override
 	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id,
 			boolean checked) {
-        if (checked) {
-            nr++;
-            customAdapter.setNewSelection(position, id, checked);                    
-        } else {
-            nr--;
-            customAdapter.removeSelection(position, id);
-        }
-        actionMode.setTitle(nr + " selected");
+		if (checked) {
+			nr++;
+			customAdapter.setNewSelection(position, id, checked);                    
+		} else {
+			nr--;
+			customAdapter.removeSelection(position, id);
+		}
+		actionMode.setTitle(nr + " selected");
 
 	}
-	
+
 	private void resetCount()
 	{
 		nr = 0;

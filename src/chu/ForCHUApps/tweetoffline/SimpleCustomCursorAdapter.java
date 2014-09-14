@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +50,10 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
 			String[] from, int[] to, int flags) {
 		super(context, layout, c, from, to, flags);
 		this.context = context;
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
         v.setBackgroundColor(((Activity)context).getResources().getColor(android.R.color.background_light)); //default color
         

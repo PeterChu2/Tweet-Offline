@@ -1,16 +1,11 @@
 package chu.ForCHUApps.tweetoffline;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.telephony.SmsManager;
-import android.widget.EditText;
 
 public class SMSHelper {
-	private static String SENT = "SMS_SENT";
-	private static String DELIVERED = "SMS_DELIVERED";
 	public static String twitterNumber;
 	private Context context;
 
@@ -26,6 +21,7 @@ public class SMSHelper {
 	// ---sends an SMS message to another device---
 	public void sendSMS(String message) {
 
+		// Ensure twitterNumber is configured
 		if(twitterNumber == null)
 		{
 			AlertDialog.Builder alert = new AlertDialog.Builder(context);
@@ -42,9 +38,6 @@ public class SMSHelper {
 		}
 		else
 		{
-			PendingIntent piSent = PendingIntent.getBroadcast(context, 0, new Intent(SENT), 0);
-			PendingIntent piDelivered = PendingIntent.getBroadcast(context, 0,new Intent(DELIVERED), 0);
-
 			SmsManager smsManager = SmsManager.getDefault();
 			smsManager.sendTextMessage(twitterNumber, null, message,null,null);// piSent, piDelivered);
 		}

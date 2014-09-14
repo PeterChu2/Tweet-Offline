@@ -14,7 +14,6 @@ import android.util.Log;
 
 public class SMSReceiver extends BroadcastReceiver{
 
-	private static final String TAG = "DEBUG";
 	private String bio;
 	private String name;
 	private String recentTweet;
