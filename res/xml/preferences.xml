@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/configuration" >
+        <EditTextPreference
+            android:dialogTitle="@string/set_twitter_number"
+            android:key="edittext_twitter_number"
+            android:summary="@string/twitter_number_desc"
+            android:title="@string/set_twitter_number" />
+
+        <Preference
+            android:key="signUp"
+            android:summary="@string/signUp_desc"
+            android:title="@string/signUp" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/account_settings" >
+        <EditTextPreference
+            android:dialogTitle="@string/set_status"
+            android:key="edittext_set_status"
+            android:summary="@string/set_status_desc"
+            android:title="@string/set_status" />
+        <EditTextPreference
+            android:dialogTitle="@string/set_location"
+            android:key="edittext_set_location"
+            android:summary="@string/set_location_desc"
+            android:title="@string/set_location" />
+
+        <PreferenceScreen
+            android:summary="@string/countryShortCodesSummary"
+            android:title="@string/countryShortCodes" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://support.twitter.com/articles/20170024-twitter-s-supported-mobile-carriers" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

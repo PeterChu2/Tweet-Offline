@@ -13,8 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,7 +39,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class MainActivity extends ActionBarActivity implements YesNoListener {
+public class MainActivity extends ActionBarActivity implements YesNoListener{
+
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -57,8 +60,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	private SMSHelper smsHelper;
 	private static String DATABASE_NAME;
 	private SharedPreferences sharedPreferences;
-	private String twitterNumberKey = "chu.ForCHUApps.tweetoffline";
 	private String twitterNumber;
+	private static final String twitterNumberKey = "edittext_twitter_number";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +70,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		// Set the actionbar overflow
 		getOverflowMenu();
 
-		// Get sharedPreferences with the User's twitter Number
-		sharedPreferences = this.getSharedPreferences(
-				"chu.ForCHUApps.tweetoffline", Context.MODE_PRIVATE);
-
+		// Get sharedPreferences with the User's twitter short code if it exists
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		smsHelper = new SMSHelper(this);
 		
 		if(sharedPreferences.contains(twitterNumberKey))
@@ -80,7 +81,17 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		}
 		else
 		{
-			setTwitterNumber();
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			alert.setTitle("Configure Twitter shortcode");
+			alert.setMessage("The app will not be able to do anything until" +
+					" you set your SMS shortcode in the settings.");
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					// Do nothing, user confirmed seeing the message
+				}
+			});
+			alert.show();
 		}
 
 		tabListener = new ActionBar.TabListener(){
@@ -141,6 +152,15 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	}
 
 	@Override
+	protected void onPause() {
+		super.onPause();
+	};
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+	
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 	}
@@ -161,13 +181,19 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+//			preferenceFragment = new TwitterPreferenceFragment();
+//	        getFragmentManager().beginTransaction().replace(android.R.id.content,
+//	        		preferenceFragment).commit();
+			Intent intent = new Intent();
+	        intent.setClass(MainActivity.this, SettingsActivity.class);
+	        startActivityForResult(intent, 0); 
 			return true;
 		}
 		if (id == R.id.clearList)
 		{
 			Fragment currFragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
-			((PlaceholderFragment)currFragment).deleteRecords();
-			((PlaceholderFragment)currFragment).populateListViewFromDB();
+			((TwitterListFragment)currFragment).deleteRecords();
+			((TwitterListFragment)currFragment).populateListViewFromDB();
 			return true;
 		}
 		if (id == R.id.composeTweet)
@@ -203,7 +229,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			return PlaceholderFragment.newInstance(position + 1);
+			return TwitterListFragment.newInstance(position + 1);
 		}
 
 		@Override
@@ -230,7 +256,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment
+	public static class TwitterListFragment extends Fragment
 	{
 		/**
 		 * The fragment argument representing the section number for this
@@ -254,15 +280,15 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			return customAdapter;
 		}
 
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
+		public static TwitterListFragment newInstance(int sectionNumber) {
+			TwitterListFragment fragment = new TwitterListFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
 		}
 
-		public PlaceholderFragment(){
+		public TwitterListFragment(){
 			intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 			// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 			intentFilter.setPriority(999);
@@ -400,6 +426,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 			populateListViewFromDB();
 			database.close();
 		}
+		
 
 		public void populateListViewFromDB() {
 			database.open();
@@ -451,7 +478,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 		String text = "";
 		String tag = dialog.getTag();
 		EditText input;
-		PlaceholderFragment currFragment = (PlaceholderFragment) getSupportFragmentManager().findFragmentByTag(
+		TwitterListFragment currFragment = (TwitterListFragment) getSupportFragmentManager().findFragmentByTag(
 				"android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
 
 		// Do different actions depending on what dialog is shown
@@ -501,40 +528,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener {
 
 	}
 
-	private void setTwitterNumber()
-	{
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setTitle("Configure Twitter shortcode");
-		alert.setMessage("Set the twitter shortcode for your country and mobile operator." +
-				" These values can be found on: https://support.twitter.com/articles/20170024." +
-				"\nU.S. shortcode: 40404\nCanada shortcode: 21212");
-
-		// Set an EditText view to get user input 
-		final EditText input = new EditText(this);
-		alert.setView(input);
-
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String shortCode = input.getText().toString();
-				sharedPreferences.edit().putString(twitterNumberKey, shortCode ).apply();
-				twitterNumber = shortCode;
-				smsHelper.setTwitterNumber(twitterNumber);
-			}
-		});
-
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				// Canceled.
-			}
-		});
-
-		alert.show();
-	}
-
 	@Override
 	public void onNo() {
 		// TODO Auto-generated method stub
-
 	}
+	
 }
