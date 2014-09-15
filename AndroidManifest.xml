@@ -14,7 +14,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/dm"
+        android:icon="@drawable/tweet_offline_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
