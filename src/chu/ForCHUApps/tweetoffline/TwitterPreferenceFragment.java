@@ -16,6 +16,7 @@ public class TwitterPreferenceFragment extends PreferenceFragment implements OnS
 	private String twitterNumber;
 	private SharedPreferences sharedPreferences;
 	private Preference signUpPref;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -3,17 +3,36 @@ package chu.ForCHUApps.tweetoffline;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
+
+import twitter4j.conf.*; 
+import twitter4j.IDs;
+import twitter4j.RateLimitStatus;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
+
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +41,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,9 +56,24 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements YesNoListener{
 
+	private static final String TWITTER_CONSUMER_KEY = "ecIc8ctYPjZmcAhR8oc1CB5LF";
+	private static final String TWITTER_CONSUMER_SECRET = "b8R632rpG6w4G3A6cyjAhm9cXVNPUlLeb762L9jb8JZISzM9Pj";
+	// Preference Constants
+	static String PREFERENCE_NAME = "twitter_oauth";
+	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+
+	static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
+
+	// Twitter oauth urls
+	static final String URL_TWITTER_AUTH = "auth_url";
+	static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
+	static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -48,6 +84,18 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
 
+	// Twitter
+	private static Twitter twitter; // Use this to access Twitter API
+	private static RequestToken requestToken;
+	// Progress dialog
+	ProgressDialog pDialog;
+
+	// Internet Connection detector
+	private ConnectionDetector cd;
+
+	// Alert Dialog Manager
+	AlertDialogManager alert = new AlertDialogManager();
+
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
@@ -55,7 +103,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	public static final String ROW_ID = "row_id"; // Intent extra key
 	private ActionBar.TabListener tabListener;
 	private SMSHelper smsHelper;
-	private static String DATABASE_NAME;
 	private SharedPreferences sharedPreferences;
 	private String twitterNumber;
 	private static final String twitterNumberKey = "edittext_twitter_number";
@@ -91,6 +138,30 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			alert.show();
 		}
 
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+			.permitAll().build();
+			StrictMode.setThreadPolicy(policy);
+		}
+
+		cd = new ConnectionDetector(getApplicationContext());
+
+		// Check if Internet present
+		if (!cd.isConnectingToInternet()) {
+			// Internet Connection is not present
+			alert.showAlertDialog(MainActivity.this, "Internet Connection Error",
+					"Please connect to working Internet connection", false);
+			// stop executing code by return
+			return;
+		}
+
+		// Check if twitter keys are set
+		if(TWITTER_CONSUMER_KEY.trim().length() == 0 || TWITTER_CONSUMER_SECRET.trim().length() == 0){
+			// Internet Connection is not present
+			alert.showAlertDialog(MainActivity.this, "Twitter oAuth tokens", "Please set your twitter oauth tokens first!", false);
+			// stop executing code by return
+			return;
+		}
 		tabListener = new ActionBar.TabListener(){
 			@Override
 			public void onTabSelected(ActionBar.Tab tab,
@@ -111,6 +182,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			}
 		};
 
+
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -127,8 +199,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
-		mViewPager
-		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int position) {
 				actionBar.setSelectedNavigationItem(position);
@@ -144,6 +215,44 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			actionBar.addTab(actionBar.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(tabListener));
+		}
+
+		if (!isTwitterLoggedInAlready()) {
+			Uri uri = getIntent().getData();
+			if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+				// oAuth verifier
+				String verifier = uri
+						.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
+
+				try {
+					// Get the access token
+					AccessToken accessToken = twitter.getOAuthAccessToken(
+							requestToken, verifier);
+
+					// Shared Preferences
+					Editor e = sharedPreferences.edit();
+
+					// After getting access token, access token secret
+					// store them in application preferences
+					e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
+					e.putString(PREF_KEY_OAUTH_SECRET,
+							accessToken.getTokenSecret());
+					// Store login status - true
+					e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
+					e.commit(); // save changes
+
+					Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
+
+					// Getting user details from twitter
+					// For now i am getting his name only
+					long userID = accessToken.getUserId();
+					User user = twitter.showUser(userID);
+					String username = "@" + user.getScreenName();
+				} catch (Exception e) {
+					// Check log for login errors
+					Log.e("Twitter Login Error", "> " + e.getMessage());
+				}
+			}
 		}
 
 	}
@@ -178,12 +287,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			//			preferenceFragment = new TwitterPreferenceFragment();
-			//	        getFragmentManager().beginTransaction().replace(android.R.id.content,
-			//	        		preferenceFragment).commit();
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, SettingsActivity.class);
-			startActivityForResult(intent, 0); 
+			startActivityForResult(intent, 0);
 			return true;
 		}
 		if (id == R.id.clearList)
@@ -207,6 +313,11 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		{
 			ConfirmDialogFragment confirmDialog = ConfirmDialogFragment.newInstance("Turn on all notifications", false, 0);
 			confirmDialog.show(getFragmentManager(), "notifsON");
+		}
+		if (id == R.id.syncList)
+		{
+			loginToTwitter();
+			new SyncTwitterContacts(this).execute("a");
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -250,204 +361,12 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		}
 	}
 
-	// Fragments representing the lists
-	public static class TwitterListFragment extends Fragment
-	{
-		private static final String ARG_SECTION_NUMBER = "section_number";
-		private DatabaseConnector database;
-		private Cursor cursor;
-		private SimpleCustomCursorAdapter customAdapter;
-		private Activity activity;
-		private String[] from = new String[] { "username" };
-		private int[] to = new int[] { R.id.usernameTextView };
-		private TwitterListListener multiListener;
-		private ListView listView;
-		private SMSReceiver smsReceiver;
-		private IntentFilter intentFilter;
-
-
-		public SimpleCustomCursorAdapter getCustomAdapter()
-		{
-			return customAdapter;
-		}
-
-		public static TwitterListFragment newInstance(int sectionNumber) {
-			TwitterListFragment fragment = new TwitterListFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public TwitterListFragment(){
-			intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-			// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
-			intentFilter.setPriority(999);
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			this.activity = activity;
-			Bundle bundle = this.getArguments();
-
-			// Map layout items to data
-			customAdapter = new SimpleCustomCursorAdapter(this.getActivity(),
-					R.layout.list_item,
-					null,
-					from,
-					to,
-					0);
-
-			int sectionNumber = bundle.getInt(ARG_SECTION_NUMBER);
-			if(sectionNumber == 1)
-			{
-				DATABASE_NAME = "Following";
-			}
-			if(sectionNumber == 2)
-			{
-				DATABASE_NAME = "Followers";
-			}
-			if(sectionNumber == 3)
-			{
-				DATABASE_NAME = "Custom";
-			}
-			this.database = new DatabaseConnector(activity, DATABASE_NAME);
-			multiListener = new TwitterListListener(database.getName(), getActivity(), customAdapter);
-			smsReceiver = new SMSReceiver(DATABASE_NAME, null);
-			activity.registerReceiver(smsReceiver, intentFilter);
-		}
-
-		@Override
-		public void onDetach() {
-			super.onDetach();
-			activity.unregisterReceiver(smsReceiver);
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			final int section = getArguments().getInt(ARG_SECTION_NUMBER);
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
-					false);
-			Button newButton = (Button) rootView.findViewById(R.id.newButton);
-			ListView listView = (ListView) rootView
-					.findViewById(R.id.twitterList);
-
-			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-				@Override
-				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-						int position, long arg3) {
-
-					getListView().setItemChecked(position, !customAdapter.isPositionChecked(position));
-					return false;
-				}
-			});
-			// Allow for selecting multiple entries in contextual menu
-			listView.setMultiChoiceModeListener(multiListener);
-			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-			populateListViewFromDB();
-			listView.setAdapter(customAdapter);
-			database.close();
-
-			this.listView = listView;
-
-			if(section == 1)
-			{
-				newButton.setText("Follow New User");
-			}
-			else if(section == 2)
-			{
-				newButton.setText("Add Follower");
-			}
-			else if(section == 3)
-			{
-				newButton.setText("Add User");
-			}
-
-			newButton.setOnClickListener(new OnClickListener() {
-
-				Bundle bundle;
-				@Override
-				public void onClick(View v) {
-					bundle = new Bundle();
-					bundle.putInt("section", section);
-					Intent addNewUser = 
-							new Intent(activity, AddEditUser.class);
-					addNewUser.putExtras(bundle);
-					startActivityForResult(addNewUser, 0); // start AddEditContact Activity
-				}
-
-			});
-			listView.setOnItemClickListener(new OnItemClickListener() 
-			{
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,
-						long id) 
-				{
-					// create an Intent to launch the ViewContact Activity
-					Intent viewUser = 
-							new Intent(activity, ViewUser.class);
-
-					// pass the selected contact's row ID as an extra with the Intent
-					viewUser.putExtra(ROW_ID, id);
-					viewUser.putExtra("section", section);
-					startActivityForResult(viewUser, 0); // start the ViewContact Activity
-				} // end method onItemClick
-			}); // end viewContactListener);
-			return rootView;
-		}
-
-		public ListView getListView()
-		{
-			return listView;
-		}
-
-		public String getName()
-		{
-			return database.getName();
-		}
-
-		@Override
-		public void onResume() {
-			super.onResume();
-		}
-
-		// Refresh list when returning from another activity
-		public void onActivityResult(int requestcode, int resultCode, Intent data)
-		{
-			populateListViewFromDB();
-			database.close();
-		}
-
-		// Refreshes the ListView from the database
-		public void populateListViewFromDB() {
-			database.open();
-			cursor = database.getAllRecords();
-			if(cursor != null)
-			{
-				customAdapter.changeCursor(cursor);
-			}
-			else
-			{
-				customAdapter.swapCursor(null);
-			}
-
-			customAdapter.notifyDataSetChanged();
-		}
-
-		// Deletes all users in the current list
-		private void deleteRecords(){
-			database.open();
-			database.deleteRecords();
-			database.close();
-		}
-	}
+	
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
@@ -531,4 +450,132 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// NOOP
 	}
 
+	private boolean isTwitterLoggedInAlready() {
+		// return twitter login status from Shared Preferences
+		return sharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+	}
+
+	private void loginToTwitter() {
+		// Check if already logged in
+		if (!isTwitterLoggedInAlready()) {
+			ConfigurationBuilder builder = new ConfigurationBuilder();
+			builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+			builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+			Configuration configuration = builder.build();
+
+			TwitterFactory factory = new TwitterFactory(configuration);
+			twitter = factory.getInstance();
+
+			try {
+				requestToken = twitter
+						.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+				this.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+						.parse(requestToken.getAuthenticationURL())));
+			} catch (TwitterException e) {
+				e.printStackTrace();
+			}
+		} else {
+			// user already logged into twitter
+			Toast.makeText(getApplicationContext(),
+					"Already Logged into twitter", Toast.LENGTH_LONG).show();
+		}
+	}
+
+
+
+	class SyncTwitterContacts extends AsyncTask<String, String, String> {
+
+		/**
+		 * Before starting background thread Show Progress Dialog
+		 * */
+		Context context;
+		public SyncTwitterContacts(Context context)
+		{
+			this.context = context;
+		}
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(MainActivity.this);
+			pDialog.setMessage("Fetching User Contacts");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+
+		protected String doInBackground(String... args) {
+			DatabaseConnector databaseConnector = new DatabaseConnector(context, "Followers");
+
+			try {
+				ConfigurationBuilder builder = new ConfigurationBuilder();
+				builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
+				builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+
+				// Access Token 
+				String access_token = sharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
+				// Access Token Secret
+				String access_token_secret = sharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");
+
+				AccessToken accessToken = new AccessToken(access_token, access_token_secret);
+				Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
+
+				// Update status
+				long cursor = -1;
+				IDs ids;
+				Log.d("DEBUG","Listing followers's ids.");
+				Map<String ,RateLimitStatus> rateLimitStatus = twitter.getRateLimitStatus();
+				RateLimitStatus status = rateLimitStatus.get("/users/show/:id");
+
+				if (0 < args.length) {
+					ids = twitter.getFollowersIDs(args[0], cursor);
+					ids = twitter.getFollowersIDs("peterchu_", cursor);
+				} else {
+					ids = twitter.getFollowersIDs(cursor);
+				}
+
+				for (long id : ids.getIDs()) {
+					if(status.getRemaining() == 0){
+						Toast.makeText(getApplicationContext(), "Rate Limit of " + status.getLimit() 
+								+ " has been reached. Your remaining followers will be fetched in "+
+								status.getSecondsUntilReset()+" seconds.", Toast.LENGTH_SHORT).show();
+						try {
+							Thread.sleep(status.getSecondsUntilReset()*1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					User user = twitter.showUser(id);
+					databaseConnector.insertRecord(
+							"@" + user.getScreenName(),
+							user.getName(),
+							"", user.getDescription());
+				}
+
+			} catch (TwitterException e) {
+				// Error in updating status
+				Log.d("Twitter Update Error", e.getMessage());
+			}
+			return null;
+		}
+		/**
+		 * After completing background task Dismiss the progress dialog and show
+		 * the data in UI Always use runOnUiThread(new Runnable()) to update UI
+		 * from background thread, otherwise you will get error
+		 * **/
+		protected void onPostExecute(String file_url) {
+			// dismiss the dialog after getting all products
+			pDialog.dismiss();
+			// updating UI from Background Thread
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(getApplicationContext(),
+							"Synced Twitter Contacts Successfully!", Toast.LENGTH_SHORT)
+							.show();
+
+				}
+			});
+		}
+	}
 }
