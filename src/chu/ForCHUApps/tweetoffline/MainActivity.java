@@ -17,18 +17,14 @@ import twitter4j.auth.RequestToken;
 
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,21 +37,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements YesNoListener{
@@ -87,6 +73,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	// Twitter
 	private static Twitter twitter; // Use this to access Twitter API
 	private static RequestToken requestToken;
+	private String username;
 	// Progress dialog
 	ProgressDialog pDialog;
 
@@ -247,7 +234,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 					// For now i am getting his name only
 					long userID = accessToken.getUserId();
 					User user = twitter.showUser(userID);
-					String username = "@" + user.getScreenName();
+					username = user.getScreenName();
 				} catch (Exception e) {
 					// Check log for login errors
 					Log.e("Twitter Login Error", "> " + e.getMessage());
@@ -317,7 +304,10 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		if (id == R.id.syncList)
 		{
 			loginToTwitter();
-			new SyncTwitterContacts(this).execute("a");
+			if(username != null)
+			{
+				new SyncTwitterContacts(this).execute(username);
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -361,7 +351,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		}
 	}
 
-	
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -528,7 +518,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 				if (0 < args.length) {
 					ids = twitter.getFollowersIDs(args[0], cursor);
-					ids = twitter.getFollowersIDs("peterchu_", cursor);
 				} else {
 					ids = twitter.getFollowersIDs(cursor);
 				}
