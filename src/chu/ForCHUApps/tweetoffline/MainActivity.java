@@ -52,7 +52,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	static String PREFERENCE_NAME = "twitter_oauth";
 	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
 	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
+	static final String PREF_USERNAME = "usernameKey";
 
 	static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
 
@@ -215,6 +216,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 					// Get the access token
 					AccessToken accessToken = twitter.getOAuthAccessToken(
 							requestToken, verifier);
+					long userID = accessToken.getUserId();
+					User user = twitter.showUser(userID);
+					username = user.getScreenName();
 
 					// Shared Preferences
 					Editor e = sharedPreferences.edit();
@@ -226,15 +230,14 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 							accessToken.getTokenSecret());
 					// Store login status - true
 					e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
+					e.putString(PREF_USERNAME, username);
 					e.commit(); // save changes
 
 					Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
 
 					// Getting user details from twitter
 					// For now i am getting his name only
-					long userID = accessToken.getUserId();
-					User user = twitter.showUser(userID);
-					username = user.getScreenName();
+					
 				} catch (Exception e) {
 					// Check log for login errors
 					Log.e("Twitter Login Error", "> " + e.getMessage());
@@ -466,6 +469,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			}
 		} else {
 			// user already logged into twitter
+			username = sharedPreferences.getString(PREF_USERNAME, username);
 			Toast.makeText(getApplicationContext(),
 					"Already Logged into twitter", Toast.LENGTH_LONG).show();
 		}
@@ -494,7 +498,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			pDialog.setCancelable(false);
 			pDialog.show();
 		}
-
+		
 		protected String doInBackground(String... args) {
 			DatabaseConnector followerDatabase = new DatabaseConnector(context, "Followers");
 			DatabaseConnector followingDatabase = new DatabaseConnector(context, "Following");
@@ -516,7 +520,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 				long cursor = -1;
 				IDs follower_ids;
 				IDs following_ids;
-				Log.d("DEBUG","Listing followers's ids.");
 				Map<String ,RateLimitStatus> rateLimitStatus = twitter.getRateLimitStatus();
 				RateLimitStatus status = rateLimitStatus.get("/users/show/:id");
 
