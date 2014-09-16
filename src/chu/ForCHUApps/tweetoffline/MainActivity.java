@@ -498,6 +498,11 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			pDialog.setCancelable(false);
 			pDialog.show();
 		}
+
+		@Override
+		protected void onProgressUpdate(String... values) {
+			pDialog.setMessage(values[0]);
+		}
 		
 		protected String doInBackground(String... args) {
 			DatabaseConnector followerDatabase = new DatabaseConnector(context, "Followers");
@@ -533,14 +538,15 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 				for (long id : follower_ids.getIDs()) {
 					if(status.getRemaining() == 0){
-						Toast.makeText(getApplicationContext(), "Rate Limit of " + status.getLimit() 
+						publishProgress("Rate Limit of " + status.getLimit() 
 								+ " has been reached. Your remaining followers will be fetched in "+
-								status.getSecondsUntilReset()+" seconds.", Toast.LENGTH_SHORT).show();
+								status.getSecondsUntilReset()+" seconds.");
 						try {
-							Thread.sleep(status.getSecondsUntilReset()*1000);
+							Thread.sleep(status.getSecondsUntilReset()*1001);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
+						publishProgress("Fetching User Contacts");
 					}
 					User user = twitter.showUser(id);
 					followerDatabase.insertRecord(
@@ -549,18 +555,18 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 							"", user.getDescription());
 				}
 				followerDatabase.close();
-				
+
 				for (long id : following_ids.getIDs()) {
 					if(status.getRemaining() == 0){
-						Toast.makeText(getApplicationContext(), "Rate Limit of " + status.getLimit() 
-								+ " has been reached. The remaining users you are following" +
-								" will be fetched in "+
-								status.getSecondsUntilReset()+" seconds.", Toast.LENGTH_SHORT).show();
+						publishProgress("Rate Limit of " + status.getLimit() 
+								+ " has been reached. Your remaining followers will be fetched in "+
+								status.getSecondsUntilReset()+" seconds.");
 						try {
-							Thread.sleep(status.getSecondsUntilReset()*1000);
+							Thread.sleep(status.getSecondsUntilReset()*1001);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
+						publishProgress("Fetching User Contacts");
 					}
 					User user = twitter.showUser(id);
 					followingDatabase.insertRecord(
