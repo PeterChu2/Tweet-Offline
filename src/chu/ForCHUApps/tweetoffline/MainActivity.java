@@ -597,6 +597,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 					Toast.makeText(getApplicationContext(),
 							"Synced Twitter Contacts Successfully!", Toast.LENGTH_SHORT)
 							.show();
+					TwitterListFragment currFragment = (TwitterListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
+					currFragment.populateListViewFromDB();
 
 				}
 			});
