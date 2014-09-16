@@ -472,7 +472,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	}
 
 
-
+	// Class that uses Twitter API to fetch information of a user's contacts
+	// This task will sync the follower and following list to the user's actual lists
+	
 	class SyncTwitterContacts extends AsyncTask<String, String, String> {
 
 		/**
@@ -494,7 +496,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		}
 
 		protected String doInBackground(String... args) {
-			DatabaseConnector databaseConnector = new DatabaseConnector(context, "Followers");
+			DatabaseConnector followerDatabase = new DatabaseConnector(context, "Followers");
+			DatabaseConnector followingDatabase = new DatabaseConnector(context, "Following");
 
 			try {
 				ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -511,18 +514,21 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 				// Update status
 				long cursor = -1;
-				IDs ids;
+				IDs follower_ids;
+				IDs following_ids;
 				Log.d("DEBUG","Listing followers's ids.");
 				Map<String ,RateLimitStatus> rateLimitStatus = twitter.getRateLimitStatus();
 				RateLimitStatus status = rateLimitStatus.get("/users/show/:id");
 
 				if (0 < args.length) {
-					ids = twitter.getFollowersIDs(args[0], cursor);
+					follower_ids = twitter.getFollowersIDs(args[0], cursor);
+					following_ids = twitter.getFriendsIDs(args[0], cursor);
 				} else {
-					ids = twitter.getFollowersIDs(cursor);
+					follower_ids = twitter.getFollowersIDs(cursor);
+					following_ids = twitter.getFriendsIDs(cursor);
 				}
 
-				for (long id : ids.getIDs()) {
+				for (long id : follower_ids.getIDs()) {
 					if(status.getRemaining() == 0){
 						Toast.makeText(getApplicationContext(), "Rate Limit of " + status.getLimit() 
 								+ " has been reached. Your remaining followers will be fetched in "+
@@ -530,16 +536,36 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 						try {
 							Thread.sleep(status.getSecondsUntilReset()*1000);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 					User user = twitter.showUser(id);
-					databaseConnector.insertRecord(
+					followerDatabase.insertRecord(
 							"@" + user.getScreenName(),
 							user.getName(),
 							"", user.getDescription());
 				}
+				followerDatabase.close();
+				
+				for (long id : following_ids.getIDs()) {
+					if(status.getRemaining() == 0){
+						Toast.makeText(getApplicationContext(), "Rate Limit of " + status.getLimit() 
+								+ " has been reached. The remaining users you are following" +
+								" will be fetched in "+
+								status.getSecondsUntilReset()+" seconds.", Toast.LENGTH_SHORT).show();
+						try {
+							Thread.sleep(status.getSecondsUntilReset()*1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					User user = twitter.showUser(id);
+					followingDatabase.insertRecord(
+							"@" + user.getScreenName(),
+							user.getName(),
+							"", user.getDescription());
+				}
+				followingDatabase.close();
 
 			} catch (TwitterException e) {
 				// Error in updating status
