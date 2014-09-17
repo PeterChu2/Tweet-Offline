@@ -194,6 +194,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(tabListener));
 		}
+		handleIntent(getIntent());
 
 	}
 
@@ -210,6 +211,17 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	protected void onDestroy() {
 		super.onDestroy();
 	}
+
+	// Refresh list when returning from another activity
+//	@Override
+//	public void onActivityResult(int requestcode, int resultCode, Intent data)
+//	{
+//		super.onActivityResult(requestcode, resultCode, data);
+//		if( requestcode == 500 )
+//		{
+//			
+//		}
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -405,41 +417,6 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		// Check if already logged in
 		if (!isTwitterLoggedInAlready()) {
 
-			Uri uri = getIntent().getData();
-			if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
-				// oAuth verifier
-				String verifier = uri
-						.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
-
-				try {
-					// Get the access token
-					AccessToken accessToken = twitter.getOAuthAccessToken(
-							requestToken, verifier);
-					long userID = accessToken.getUserId();
-					User user = twitter.showUser(userID);
-					username = user.getScreenName();
-
-					// Shared Preferences
-					Editor e = sharedPreferences.edit();
-
-					// After getting access token, access token secret
-					// store them in application preferences
-					e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
-					e.putString(PREF_KEY_OAUTH_SECRET,
-							accessToken.getTokenSecret());
-					// Store login status - true
-					e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-					e.putString(PREF_USERNAME, username);
-					e.commit(); // save changes
-
-					Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
-
-				} catch (Exception e) {
-					// Check log for login errors
-					Log.e("Twitter Login Error", "> " + e.getMessage());
-				}
-			}
-
 			ConfigurationBuilder builder = new ConfigurationBuilder();
 			builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
 			builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
@@ -451,8 +428,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			try {
 				requestToken = twitter
 						.getOAuthRequestToken(TWITTER_CALLBACK_URL);
-				this.startActivity(new Intent(Intent.ACTION_VIEW, Uri
-						.parse(requestToken.getAuthenticationURL())));
+				this.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri
+						.parse(requestToken.getAuthenticationURL())), 500);
 			} catch (TwitterException e) {
 				e.printStackTrace();
 			}
@@ -651,5 +628,53 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 				}
 			});
 		}
+
 	}
+	@Override
+	protected void onNewIntent(Intent intent) {
+		setIntent(intent);
+		handleIntent(intent);
+	}
+
+	// Manually handle returning from intent to authenticate with twitter
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			Uri uri = intent.getData();
+			if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+				// oAuth verifier
+				String verifier = uri
+						.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
+
+				try {
+					// Get the access token
+					AccessToken accessToken = twitter.getOAuthAccessToken(
+							requestToken, verifier);
+					long userID = accessToken.getUserId();
+					User user = twitter.showUser(userID);
+					username = user.getScreenName();
+					// Shared Preferences
+					Editor e = sharedPreferences.edit();
+
+					// After getting access token, access token secret
+					// store them in application preferences
+					e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
+					e.putString(PREF_KEY_OAUTH_SECRET,
+							accessToken.getTokenSecret());
+					// Store login status - true
+					e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
+					e.putString(PREF_USERNAME, username);
+					e.commit(); // save changes
+
+					Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
+
+				} catch (Exception e) {
+					// Check log for login errors
+					Log.e("Twitter Login Error", "> " + e.getMessage());
+				}
+			}
+			// Update the database with the newly authenticated user's contacts
+			new SyncTwitterContacts(this).execute(username);
+		}
+	}
+	
 }
