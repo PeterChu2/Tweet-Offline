@@ -2,8 +2,8 @@ package chu.ForCHUApps.tweetoffline;
 
 public class Constants {
 
-	static final String TWITTER_CONSUMER_KEY = "ecIc8ctYPjZmcAhR8oc1CB5LF";
-	static final String TWITTER_CONSUMER_SECRET = "b8R632rpG6w4G3A6cyjAhm9cXVNPUlLeb762L9jb8JZISzM9Pj";
+	static final String TWITTER_CONSUMER_KEY = "*************************";
+	static final String TWITTER_CONSUMER_SECRET = "**************************************************";
 	// Preference Constants
 	static String PREFERENCE_NAME = "twitter_oauth";
 	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
