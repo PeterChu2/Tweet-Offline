@@ -1,6 +1,5 @@
 package chu.ForCHUApps.tweetoffline;
 
-import chu.ForCHUApps.tweetoffline.MainActivity.TwitterListFragment;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;

@@ -5,28 +5,33 @@
     <item
         android:id="@+id/composeTweet"
         android:icon="@drawable/compose_icon"
-        tweet_offline:showAsAction="always"
-        android:title="@string/compose">
+        android:title="@string/compose"
+        tweet_offline:showAsAction="always">
     </item>
     <item
         android:id="@+id/action_settings"
-        tweet_offline:showAsAction="never"
-        android:title="@string/action_settings">
+        android:title="@string/action_settings"
+        tweet_offline:showAsAction="never">
     </item>
     <item
         android:id="@+id/notifsON"
-        tweet_offline:showAsAction="never"
-        android:title="@string/notifsON">
+        android:title="@string/notifsON"
+        tweet_offline:showAsAction="never">
     </item>
     <item
         android:id="@+id/notifsOFF"
-        tweet_offline:showAsAction="never"
-        android:title="@string/notifsOFF">
+        android:title="@string/notifsOFF"
+        tweet_offline:showAsAction="never">
     </item>
     <item
         android:id="@+id/clearList"
-        tweet_offline:showAsAction="never"
-        android:title="@string/clearList">
+        android:title="@string/clearList"
+        tweet_offline:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/syncList"
+        android:title="@string/syncList"
+        tweet_offline:showAsAction="never">
     </item>
 
 </menu>

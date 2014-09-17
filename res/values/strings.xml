@@ -50,4 +50,6 @@
    <string name="countryShortCodesSummary">View the list of Twitter Short Codes in your browser</string>
    <string name="countryShortCodes">Find Your Twitter Short Code</string>
    <string name="signUp_desc">Get started with using Twitter\'s SMS service"</string>
+   <string name="syncList">Sync With Twitter</string>
+   
 </resources>
