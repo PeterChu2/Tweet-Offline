@@ -460,6 +460,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 								"Dismiss to load in background.");
 						if(millisUntilFinished <= 2000)
 						{
+							// Use wait and notify to start syncing contacts again once the time is up
 							synchronized (waitToken) {
 								publishProgress("Fetching User Contacts \n" +
 										"They will be fetched in the background if this dialog is dismissed");
