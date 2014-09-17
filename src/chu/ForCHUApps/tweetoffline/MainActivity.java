@@ -47,31 +47,8 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements YesNoListener{
 
-	private static final String TWITTER_CONSUMER_KEY = "ecIc8ctYPjZmcAhR8oc1CB5LF";
-	private static final String TWITTER_CONSUMER_SECRET = "b8R632rpG6w4G3A6cyjAhm9cXVNPUlLeb762L9jb8JZISzM9Pj";
-	// Preference Constants
-	static String PREFERENCE_NAME = "twitter_oauth";
-	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLoggedIn";
-	static final String PREF_USERNAME = "usernameKey";
-
-	static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
-
-	// Twitter oauth urls
-	static final String URL_TWITTER_AUTH = "auth_url";
-	static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-	static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
-
-	/**
-	 * The {@link android.support.v4.view.PagerAdapter} that will provide
-	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
-	 * derivative, which will keep every loaded fragment in memory. If this
-	 * becomes too memory intensive, it may be best to switch to a
-	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-
+	
 	// Twitter
 	private static Twitter twitter; // Use this to access Twitter API
 	private static RequestToken requestToken;
@@ -89,12 +66,10 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager mViewPager;
-	public static final String ROW_ID = "row_id"; // Intent extra key
 	private ActionBar.TabListener tabListener;
 	private SMSHelper smsHelper;
 	private SharedPreferences sharedPreferences;
 	private String twitterNumber;
-	private static final String twitterNumberKey = "edittext_twitter_number";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +82,9 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		smsHelper = new SMSHelper(this);
 
-		if(sharedPreferences.contains(twitterNumberKey))
+		if(sharedPreferences.contains(Constants.twitterNumberKey))
 		{
-			twitterNumber = sharedPreferences.getString(twitterNumberKey, null);
+			twitterNumber = sharedPreferences.getString(Constants.twitterNumberKey, null);
 			smsHelper.setTwitterNumber(twitterNumber);
 		}
 		else
@@ -134,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		}
 
 		// Check if twitter keys are set
-		if(TWITTER_CONSUMER_KEY.trim().length() == 0 || TWITTER_CONSUMER_SECRET.trim().length() == 0){
+		if(Constants.TWITTER_CONSUMER_KEY.trim().length() == 0 || Constants.TWITTER_CONSUMER_SECRET.trim().length() == 0){
 			// Internet Connection is not present
 			alert.showAlertDialog(MainActivity.this, "Twitter oAuth tokens", "Please set your twitter oauth tokens first!", false);
 			// stop executing code by return
@@ -398,7 +373,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 	private boolean isTwitterLoggedInAlready() {
 		// return twitter login status from Shared Preferences
-		return sharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+		return sharedPreferences.getBoolean(Constants.PREF_KEY_TWITTER_LOGIN, false);
 	}
 
 	private void loginToTwitter() {
@@ -418,8 +393,8 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 		if (!isTwitterLoggedInAlready()) {
 
 			ConfigurationBuilder builder = new ConfigurationBuilder();
-			builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-			builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+			builder.setOAuthConsumerKey(Constants.TWITTER_CONSUMER_KEY);
+			builder.setOAuthConsumerSecret(Constants.TWITTER_CONSUMER_SECRET);
 			Configuration configuration = builder.build();
 
 			TwitterFactory factory = new TwitterFactory(configuration);
@@ -427,7 +402,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 			try {
 				requestToken = twitter
-						.getOAuthRequestToken(TWITTER_CALLBACK_URL);
+						.getOAuthRequestToken(Constants.TWITTER_CALLBACK_URL);
 				this.startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri
 						.parse(requestToken.getAuthenticationURL())), 500);
 			} catch (TwitterException e) {
@@ -435,7 +410,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 			}
 		} else {
 			// user already logged into twitter
-			username = sharedPreferences.getString(PREF_USERNAME, username);
+			username = sharedPreferences.getString(Constants.PREF_USERNAME, username);
 			Toast.makeText(getApplicationContext(),
 					"Already Logged into twitter", Toast.LENGTH_LONG).show();
 		}
@@ -511,13 +486,13 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 			try {
 				ConfigurationBuilder builder = new ConfigurationBuilder();
-				builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-				builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);
+				builder.setOAuthConsumerKey(Constants.TWITTER_CONSUMER_KEY);
+				builder.setOAuthConsumerSecret(Constants.TWITTER_CONSUMER_SECRET);
 
 				// Access Token 
-				String access_token = sharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
+				String access_token = sharedPreferences.getString(Constants.PREF_KEY_OAUTH_TOKEN, "");
 				// Access Token Secret
-				String access_token_secret = sharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");
+				String access_token_secret = sharedPreferences.getString(Constants.PREF_KEY_OAUTH_SECRET, "");
 
 				AccessToken accessToken = new AccessToken(access_token, access_token_secret);
 				Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
@@ -640,10 +615,10 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			Uri uri = intent.getData();
-			if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+			if (uri != null && uri.toString().startsWith(Constants.TWITTER_CALLBACK_URL)) {
 				// oAuth verifier
 				String verifier = uri
-						.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
+						.getQueryParameter(Constants.URL_TWITTER_OAUTH_VERIFIER);
 
 				try {
 					// Get the access token
@@ -657,12 +632,12 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 
 					// After getting access token, access token secret
 					// store them in application preferences
-					e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
-					e.putString(PREF_KEY_OAUTH_SECRET,
+					e.putString(Constants.PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
+					e.putString(Constants.PREF_KEY_OAUTH_SECRET,
 							accessToken.getTokenSecret());
 					// Store login status - true
-					e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-					e.putString(PREF_USERNAME, username);
+					e.putBoolean(Constants.PREF_KEY_TWITTER_LOGIN, true);
+					e.putString(Constants.PREF_USERNAME, username);
 					e.commit(); // save changes
 
 					Log.e("Twitter OAuth Token", "> " + accessToken.getToken());

@@ -81,7 +81,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 		// get the selected contact's row ID
 		Bundle extras = getIntent().getExtras();
-		rowID = extras.getLong(MainActivity.ROW_ID); 
+		rowID = extras.getLong(Constants.ROW_ID); 
 		section = extras.getInt("section");
 
 		if( section == 1 )

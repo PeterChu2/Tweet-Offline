@@ -9,9 +9,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 
 public class TwitterPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
-	private static final String bioKey = "edittext_set_status";
-	private static final String locationKey = "edittext_set_location";
-	private static final String twitterNumberKey = "edittext_twitter_number";
 	private SMSHelper smsHelper;
 	private String twitterNumber;
 	private SharedPreferences sharedPreferences;
@@ -48,18 +45,18 @@ public class TwitterPreferenceFragment extends PreferenceFragment implements OnS
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		if( key.equals(twitterNumberKey ))
+		if( key.equals( Constants.twitterNumberKey ))
 		{
-			twitterNumber = sharedPreferences.getString(twitterNumberKey, null);
+			twitterNumber = sharedPreferences.getString(Constants.twitterNumberKey, null);
 			smsHelper.setTwitterNumber(twitterNumber);
 		}
-		if( key.equals( locationKey ))
+		if( key.equals( Constants.locationKey ))
 		{
-			smsHelper.sendSMS("SET LOCATION " + sharedPreferences.getString(locationKey, null));
+			smsHelper.sendSMS("SET LOCATION " + sharedPreferences.getString(Constants.locationKey, null));
 		}
-		if( key.equals( bioKey ))
+		if( key.equals( Constants.bioKey ))
 		{
-			smsHelper.sendSMS("SET BIO " + sharedPreferences.getString(locationKey, null));
+			smsHelper.sendSMS("SET BIO " + sharedPreferences.getString(Constants.locationKey, null));
 		}
 	}
 
