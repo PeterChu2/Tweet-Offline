@@ -7,6 +7,13 @@
             android:key="edittext_twitter_number"
             android:summary="@string/twitter_number_desc"
             android:title="@string/set_twitter_number" />
+        
+        <ListPreference
+            android:key="sort_by"
+            android:title="Contact View Options"
+            android:summary="Select how your contacts are displayed in the lists"
+            android:entries="@array/SortByOptions"
+            android:entryValues="@array/SortByOptions_values" />
 
         <Preference
             android:key="signUp"

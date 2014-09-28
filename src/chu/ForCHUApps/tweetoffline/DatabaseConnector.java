@@ -49,10 +49,10 @@ public class DatabaseConnector {
 	} // end method insertRecord
 
 	// return a Cursor with all contact information in the database
-	public Cursor getAllRecords() 
+	public Cursor getAllRecords(String sortBy) 
 	{
 		return database.query(DATABASE_NAME, null, 
-				null, null, null, null, "username COLLATE NOCASE");
+				null, null, null, null, sortBy + " COLLATE NOCASE");
 	} // end method getAllRecords
 
 	// get a Cursor containing all information about the record specified

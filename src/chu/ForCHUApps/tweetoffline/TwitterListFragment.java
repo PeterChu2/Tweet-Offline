@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +25,14 @@ public class TwitterListFragment extends Fragment
 	private Cursor cursor;
 	private SimpleCustomCursorAdapter customAdapter;
 	private Activity activity;
-	private String[] from = new String[] { "username" };
+	private String[] from;
 	private int[] to = new int[] { R.id.usernameTextView };
 	private TwitterListListener multiListener;
 	private ListView listView;
 	private SMSReceiver smsReceiver;
 	private IntentFilter intentFilter;
 	private String DATABASE_NAME;
+	private String sortBy;
 
 	public SimpleCustomCursorAdapter getCustomAdapter()
 	{
@@ -48,6 +51,8 @@ public class TwitterListFragment extends Fragment
 		intentFilter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
 		// For Android versions <= 4.3. This will allow the app to stop the broadcast to the default SMS app
 		intentFilter.setPriority(999);
+		// Default view option is username
+		sortBy = "username";
 	}
 
 	@Override
@@ -55,6 +60,10 @@ public class TwitterListFragment extends Fragment
 		super.onAttach(activity);
 		this.activity = activity;
 		Bundle bundle = this.getArguments();
+		// Get Options for sorting list entries
+		sortBy = PreferenceManager.getDefaultSharedPreferences(
+				activity).getString("sort_by", "username");
+		from = new String[] { sortBy };
 
 		// Map layout items to data
 		customAdapter = new SimpleCustomCursorAdapter(this.getActivity(),
@@ -86,6 +95,7 @@ public class TwitterListFragment extends Fragment
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		database.close();
 		activity.unregisterReceiver(smsReceiver);
 	}
 
@@ -188,17 +198,21 @@ public class TwitterListFragment extends Fragment
 
 	// Refreshes the ListView from the database
 	public void populateListViewFromDB() {
+		sortBy = PreferenceManager.getDefaultSharedPreferences(
+				activity).getString("sort_by", "username");
+		from[0] = sortBy;
 		database.open();
-		cursor = database.getAllRecords();
+		cursor = database.getAllRecords(sortBy);
 		if(cursor != null)
 		{
-			customAdapter.changeCursor(cursor);
+			// Change the cursor and columns too in 
+			// case the user has changed view options
+			customAdapter.changeCursorAndColumns(cursor, from, to);
 		}
 		else
 		{
 			customAdapter.swapCursor(null);
 		}
-
 		customAdapter.notifyDataSetChanged();
 	}
 
