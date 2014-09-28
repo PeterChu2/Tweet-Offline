@@ -193,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements YesNoListener{
 	{
 		super.onActivityResult(requestcode, resultCode, data);
 		// Refresh the twitter lists, synchronizing changes made by other activities
-		for (int i=0; i<= 1; i++)
+		for (int i=0; i<= 2; i++)
 		{
 			TwitterListFragment currFragment = (TwitterListFragment) (
 					getSupportFragmentManager().
