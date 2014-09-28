@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="SortByOptions">
+        <item>View by Username</item>
+        <item>View by Name</item>
+    </string-array>
+    <string-array name = "SortByOptions_values">
+        <item>username</item>
+        <item>name</item>
+    </string-array>
+</resources>
