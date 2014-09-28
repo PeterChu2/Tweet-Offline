@@ -198,17 +198,21 @@ public class TwitterListFragment extends Fragment
 
 	// Refreshes the ListView from the database
 	public void populateListViewFromDB() {
+		sortBy = PreferenceManager.getDefaultSharedPreferences(
+				activity).getString("sort_by", "username");
+		from[0] = sortBy;
 		database.open();
 		cursor = database.getAllRecords(sortBy);
 		if(cursor != null)
 		{
-			customAdapter.changeCursor(cursor);
+			// Change the cursor and columns too in 
+			// case the user has changed view options
+			customAdapter.changeCursorAndColumns(cursor, from, to);
 		}
 		else
 		{
 			customAdapter.swapCursor(null);
 		}
-
 		customAdapter.notifyDataSetChanged();
 	}
 
