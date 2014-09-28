@@ -65,7 +65,6 @@ public class TwitterListFragment extends Fragment
 				activity).getString("sort_by", "username");
 		from = new String[] { sortBy };
 
-		Log.d("DEBUG", "testing, "+sortBy);
 		// Map layout items to data
 		customAdapter = new SimpleCustomCursorAdapter(this.getActivity(),
 				R.layout.list_item,

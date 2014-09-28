@@ -153,9 +153,25 @@ public class SMSReceiver extends BroadcastReceiver{
 								// Get the first name
 								name = biography[0].split(",")[0];
 								bio = biography[1];
+							}
+							// Biography only spans one text
+							else if ( message.contains(", since ") )
+							{
+								name = message.split(",", 2)[0];
+								// String before first occurrence of period is garbage
+								bio = message.split("\\.\\n", 2)[1];
+								// Remove garbage text
+								bio = bio.replaceAll("\n\nReply\\sw/.*", "");
+							}
+							// Not a bio message, return
+							else
+							{
+								return;
+							}
 
 								if(message.startsWith("1/2: ")) // Bio does not fit in one SMS
 								{
+									// Take remainder of message after the 1/2: 
 									name = name.substring(5);
 									if(message2 != null)
 									{
@@ -175,7 +191,7 @@ public class SMSReceiver extends BroadcastReceiver{
 									cv.put("bio", bio);
 									DatabaseActions.updateUser(cv, rowID, context, DATABASE_NAME);
 								}
-							}
+							
 						}
 					}
 				} // end for loop
