@@ -201,8 +201,7 @@ class SyncTwitterContacts extends AsyncTask<String, String, String> {
 				{
 					currFragment.populateListViewFromDB();
 				}
-				ActionBarActivity a;
-
+				
 				// Followers
 				currFragment = (TwitterListFragment) ((ActionBarActivity)context).getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":1");
 				if(currFragment != null)
