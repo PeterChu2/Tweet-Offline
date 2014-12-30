@@ -4,11 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:id="@+id/listItem" >
-    
+
+    <ImageView
+                android:id="@+id/twitterIcon"
+                android:layout_width="73sp"
+                android:layout_height="73sp"
+                android:padding="10dp"
+                android:contentDescription="@string/twitterIcon" />
     <TextView
         android:id="@+id/usernameTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:textSize="16sp"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:paddingLeft="6dp"

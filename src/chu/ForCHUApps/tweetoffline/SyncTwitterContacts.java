@@ -21,7 +21,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /*Class that uses Twitter API to fetch information of a user's contacts
-	 This task will sync the follower and following list to the user's actual lists 
+	 This task will sync the follower and following list to the user's actual lists
  */
 class SyncTwitterContacts extends AsyncTask<String, String, String> {
 
@@ -97,7 +97,7 @@ class SyncTwitterContacts extends AsyncTask<String, String, String> {
 			builder.setOAuthConsumerKey(Constants.TWITTER_CONSUMER_KEY);
 			builder.setOAuthConsumerSecret(Constants.TWITTER_CONSUMER_SECRET);
 
-			// Access Token 
+			// Access Token
 			String access_token = sharedPreferences.getString(Constants.PREF_KEY_OAUTH_TOKEN, "");
 			// Access Token Secret
 			String access_token_secret = sharedPreferences.getString(Constants.PREF_KEY_OAUTH_SECRET, "");
@@ -143,7 +143,8 @@ class SyncTwitterContacts extends AsyncTask<String, String, String> {
 				followerDatabase.insertRecord(
 						"@" + user.getScreenName(),
 						user.getName(),
-						"", user.getDescription());
+						"", user.getDescription(),
+						user.getBiggerProfileImageURL());
 			}
 			followerDatabase.close();
 
@@ -167,7 +168,8 @@ class SyncTwitterContacts extends AsyncTask<String, String, String> {
 				followingDatabase.insertRecord(
 						"@" + user.getScreenName(),
 						user.getName(),
-						"", user.getDescription());
+						"", user.getDescription(),
+						user.getBiggerProfileImageURL());
 			}
 			followingDatabase.close();
 
@@ -201,7 +203,7 @@ class SyncTwitterContacts extends AsyncTask<String, String, String> {
 				{
 					currFragment.populateListViewFromDB();
 				}
-				
+
 				// Followers
 				currFragment = (TwitterListFragment) ((ActionBarActivity)context).getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":1");
 				if(currFragment != null)

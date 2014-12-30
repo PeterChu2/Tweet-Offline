@@ -1,6 +1,8 @@
 //// Activity for viewing a single user
 package chu.ForCHUApps.tweetoffline;
 
+import com.koushikdutta.ion.Ion;
+
 import chu.ForCHUApps.tweetoffline.ConfirmDialogFragment.YesNoListener;
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ViewUser extends Activity implements OnClickListener, YesNoListener
@@ -40,6 +43,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 	private ConfirmDialogFragment confirmDialog;
 	private ScrollingMovementMethod scrolling;
 	private SMSHelper smsHelper;
+	private ImageView profilePic;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
@@ -59,6 +63,8 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		recentTweetTextView.setMovementMethod(scrolling);
 		bioTextView = (TextView) findViewById(R.id.bioTextView);
 		bioTextView.setMovementMethod(scrolling);
+		
+		profilePic = (ImageView) findViewById(R.id.twitterIcon);
 
 		//get the Buttons
 		retweetButton = (Button) findViewById(R.id.retweetButton);
@@ -285,7 +291,14 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 			int usernameIndex = ((Cursor) result).getColumnIndex("username");
 			int recentTweetIndex = ((Cursor) result).getColumnIndex("recentTweet");
 			int bioIndex = ((Cursor) result).getColumnIndex("bio");
+			int picIndex = ((Cursor) result).getColumnIndex("pic");
 
+			String bigger_pic_URL = ((Cursor) result).getString(picIndex);
+			Ion.with(profilePic)
+			.placeholder(R.drawable.tweet_offline_logo)
+			.error(R.drawable.tweet_offline_logo)
+			.load(bigger_pic_URL);
+			
 			// fill TextViews with the retrieved data
 			nameTextView.setText(((Cursor) result).getString(nameIndex));
 			usernameTextView.setText(((Cursor) result).getString(usernameIndex));
