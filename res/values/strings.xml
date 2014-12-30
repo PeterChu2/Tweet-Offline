@@ -51,5 +51,7 @@
    <string name="countryShortCodes">Find Your Twitter Short Code</string>
    <string name="signUp_desc">Get started with using Twitter\'s SMS service"</string>
    <string name="syncList">Sync With Twitter</string>
+   <string name="save">Save</string>
+   <string name="twitterIcon">Twitter Icon</string>
    
 </resources>

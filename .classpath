@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="libs/twitter4j-core-4.0.2.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="libs/androidasync-2.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/ion-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

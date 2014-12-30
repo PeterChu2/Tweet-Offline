@@ -1,200 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/nameRow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/nameLabelTextView"
-            style="@style/UserLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/label_name" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/nameTextView"
-            style="@style/ValueTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="7" >
-        </TextView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/usernameRow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/usernameLabelTextView"
-            style="@style/UserLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/label_username" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/usernameTextView"
-            style="@style/ValueTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="7" >
-        </TextView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/bioRow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/bioLabelTextView"
-            style="@style/UserLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/label_bio" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/bioTextView"
-            style="@style/TweetTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="7"
-            android:maxLines="5"
-            android:scrollbars = "vertical" >
-        </TextView>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/latestTweetLabelTextView"
-        style="@style/TweetLabelTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="@string/label_latest_tweet" >
-    </TextView>
+        android:orientation="horizontal"
+        android:baselineAligned="false" >
 
-    <TextView
-        android:id="@+id/latestTweetTextView"
-        style="@style/TweetTextView"
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/twitterIcon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/twitterIcon" >
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/nameTextView"
+                android:textSize="12sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/twitterIcon"
+                android:textStyle="bold"
+                 >
+            </TextView>
+
+            <TextView
+                android:id="@+id/bioTextView"
+                android:textSize="12sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="2"
+                android:maxLines="2"
+                android:scrollbars="vertical"
+                android:layout_below="@id/nameTextView" >
+            </TextView>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/usernameTextView"
+                style="@style/ValueTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/latestTweetTextView"
+                style="@style/TweetTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="2"
+                android:maxLines="6"
+                android:scrollbars="vertical" >
+            </TextView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:maxLines="6"
         android:layout_height="wrap_content"
-        android:scrollbars = "vertical" >
-    </TextView>
+        android:orientation="vertical" >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        <Button
+            android:id="@+id/fetchButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/fetchtweet"
+            android:text="@string/Fetch" />
 
-        <LinearLayout
-            android:id="@+id/BottomRowButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:padding="5dp" >
+        <Button
+            android:id="@+id/dmButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/dm"
+            android:text="@string/dm" />
 
-            <Button
-                android:id="@+id/dmButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/dm"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/dm" />
+        <Button
+            android:id="@+id/whoButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/whois"
+            android:text="@string/whoIs" />
 
-            <Button
-                android:id="@+id/whoButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/whois"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/whoIs" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/replyButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/reply_hover"
+            android:text="@string/Reply" />
 
-        <LinearLayout
-            android:id="@+id/MidRowButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/BottomRowButtons"
-            android:padding="5dp" >
+        <Button
+            android:id="@+id/retweetButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/retweet_on"
+            android:text="@string/Retweet" />
 
-            <Button
-                android:id="@+id/replyButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/reply_hover"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/Reply" />
-
-            <Button
-                android:id="@+id/retweetButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/retweet_on"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/Retweet" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/TopRowButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/MidRowButtons"
-            android:padding="5dp" >
-
-            <Button
-                android:id="@+id/fetchButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/fetchtweet"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/Fetch" />
-
-            <Button
-                android:id="@+id/favoriteButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:drawableLeft="@drawable/favorite_on"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:text="@string/Favorite" />
-        </LinearLayout>
-    </RelativeLayout>
+        <Button
+            android:id="@+id/favoriteButton"
+            style="@style/buttonStyle"
+            android:drawableLeft="@drawable/favorite_on"
+            android:text="@string/Favorite" />
+    </LinearLayout>
 
 </LinearLayout>
