@@ -74,10 +74,16 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
 		View v = super.getView(position, convertView, parent);//let the adapter handle setting up the row views
         
         if ( mSelection.get(position) != false) {
-            v.setBackgroundColor(((Activity)context).getResources().getColor(R.color.button_clicked));// this is a selected position so make it red
+        	// selected via. long click
+            TextView username = (TextView) v.findViewById(R.id.usernameTextView);
+    		username.setBackgroundColor(((Activity)context).getResources().getColor(R.color.button_clicked));
+    		v.setBackgroundColor(((Activity)context).getResources().getColor(R.color.button_clicked));
         }
         else
         {
+        	// unselected
+        	TextView username = (TextView) v.findViewById(R.id.usernameTextView);
+    		username.setBackgroundColor(((Activity)context).getResources().getColor(android.R.color.background_light));
         	v.setBackgroundColor(((Activity)context).getResources().getColor(android.R.color.background_light)); //default color
         }
         return v;
