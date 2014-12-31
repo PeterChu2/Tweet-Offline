@@ -17,7 +17,7 @@
 
             
             <ImageView
-                android:id="@+id/twitterIcon"
+                android:id="@+id/twitterProfileIcon"
                 android:layout_width="73sp"
                 android:layout_height="73sp"
                 android:layout_alignParentTop="true"
@@ -30,7 +30,7 @@
                 android:textSize="15sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/twitterIcon"
+                android:layout_below="@id/twitterProfileIcon"
                 android:textStyle="bold"
                 android:gravity="center"
                  >

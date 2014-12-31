@@ -64,7 +64,7 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 		bioTextView = (TextView) findViewById(R.id.bioTextView);
 		bioTextView.setMovementMethod(scrolling);
 		
-		profilePic = (ImageView) findViewById(R.id.twitterIcon);
+		profilePic = (ImageView) findViewById(R.id.twitterProfileIcon);
 
 		//get the Buttons
 		retweetButton = (Button) findViewById(R.id.retweetButton);
@@ -295,7 +295,6 @@ public class ViewUser extends Activity implements OnClickListener, YesNoListener
 
 			String bigger_pic_URL = ((Cursor) result).getString(picIndex);
 			Ion.with(profilePic)
-			.placeholder(R.drawable.tweet_offline_logo)
 			.error(R.drawable.tweet_offline_logo)
 			.load(bigger_pic_URL);
 			
