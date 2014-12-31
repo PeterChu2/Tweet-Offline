@@ -8,9 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,7 +18,6 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
 	
     private SparseBooleanArray mSelection = new SparseBooleanArray();
     private Context context;
-    private LayoutInflater mInflater;
     private HashSet<Long> selectedUserIDs = new HashSet<Long>();
     
     public void setNewSelection(int position, long id, boolean value) {
@@ -58,7 +55,6 @@ public class SimpleCustomCursorAdapter extends SimpleCursorAdapter{
 		String[] from, int[] to, int flags) {
 		super(context, layout, c, from, to, flags);
 		this.context = context;
-		mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	@Override
