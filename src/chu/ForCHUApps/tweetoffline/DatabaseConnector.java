@@ -36,13 +36,15 @@ public class DatabaseConnector {
 	} // end method close
 
 	// inserts a new user in the database
-	public void insertRecord(String username, String name, String recentTweet, String bio)
+	public void insertRecord(String username, String name,
+			String recentTweet, String bio, String profilePicURL)
 	{
 		ContentValues newRecord = new ContentValues();
 		newRecord.put("username", username);
 		newRecord.put("name", name);
 		newRecord.put("recentTweet", recentTweet);
 		newRecord.put("bio", bio);
+		newRecord.put("pic", profilePicURL);
 		open();
 		database.insert(DATABASE_NAME, null, newRecord);
 		close();
@@ -60,7 +62,7 @@ public class DatabaseConnector {
 	public Cursor getOneRecord(long id) 
 	{
 		return database.query(
-				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio"},
+				DATABASE_NAME, new String[]{"username", "name", "recentTweet", "bio", "pic"},
 				"_id=" + id, null, null, null, null);
 	} // end method getOneRecord
 

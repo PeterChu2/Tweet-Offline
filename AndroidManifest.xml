@@ -45,15 +45,21 @@
         </activity>
         <activity
             android:name=".AddEditUser"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+   			android:configChanges="orientation|keyboardHidden" >
         </activity>
         <activity
             android:name=".ViewUser"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+   			android:configChanges="orientation|keyboardHidden" >
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+   			android:configChanges="orientation|keyboardHidden" >
         </activity>
     </application>
 

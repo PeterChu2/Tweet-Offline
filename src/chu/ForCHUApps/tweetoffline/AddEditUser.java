@@ -142,7 +142,7 @@ public class AddEditUser extends Activity implements YesNoListener
 		databaseConnector.insertRecord(
 				username,
 				nameEditText.getText().toString(),
-				"", "");
+				"", "", "");
 
 	} // end class saveContact
 
