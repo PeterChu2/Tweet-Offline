@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:background="@drawable/listview_background"
+        android:gravity="center"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:paddingLeft="6dp"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/twitterSmallIcon"
+        android:layout_width="0dp"
+        android:layout_height="73sp"
+        android:layout_weight="1"
+        android:width="73sp"
+        android:height="73sp"
+        android:contentDescription="@string/twitterIcon"
+        android:padding="10dp" />
+
+</LinearLayout>
