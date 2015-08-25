@@ -8,21 +8,30 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:baselineAligned="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/buttons_layout"
+        android:gravity="center">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/twitterProfileIcon"
-                android:layout_width="73sp"
-                android:layout_height="73sp"
+                android:layout_width="100sp"
+                android:layout_height="100sp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:contentDescription="@string/twitterIcon"
-                android:padding="10dp" />
+                android:padding="10dp"
+                app:riv_corner_radius="30dip"
+                app:riv_border_width="1dip"
+                app:riv_border_color="#333333"
+                app:riv_oval="true"
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/nameTextView"
@@ -41,8 +50,8 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/textview_border"
                 android:gravity="center"
-                android:maxLines="6"
-                android:minLines="6"
+                android:maxLines="4"
+                android:minLines="4"
                 android:scrollbars="vertical"
                 android:textSize="13sp"></TextView>
 
@@ -76,7 +85,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/buttons_layout">
 
         <Button
             android:id="@+id/fetchButton"

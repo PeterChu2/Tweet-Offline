@@ -44,7 +44,7 @@ public class UserDetailActivity extends Activity implements OnClickListener, Con
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_user); // inflate GUI
+        setContentView(R.layout.user_detail); // inflate GUI
         smsHelper = new SMSHelper(this);
         ScrollingMovementMethod scrolling = new ScrollingMovementMethod();
 
