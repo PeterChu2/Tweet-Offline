@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import chu.ForCHUApps.tweetoffline.models.User;
+
 public class DatabaseConnector {
     private SQLiteDatabase database; // database object
     private DatabaseOpenHelper databaseOpenHelper; // database helper
@@ -32,14 +34,13 @@ public class DatabaseConnector {
     }
 
     // inserts a new user in the database
-    public void insertRecord(String username, String name,
-                             String recentTweet, String bio, String profilePicURL) {
+    public void insertRecord(User user) {
         ContentValues newRecord = new ContentValues();
-        newRecord.put("username", username);
-        newRecord.put("name", name);
-        newRecord.put("recentTweet", recentTweet);
-        newRecord.put("bio", bio);
-        newRecord.put("pic", profilePicURL);
+        newRecord.put("username", user.getUsername());
+        newRecord.put("name", user.getName());
+        newRecord.put("recentTweet", user.getRecentTweet());
+        newRecord.put("bio", user.getBio());
+        newRecord.put("pic", user.getProfilePicURL());
         open();
         database.insertWithOnConflict(
                 mDatabaseName.name(), null, newRecord, SQLiteDatabase.CONFLICT_REPLACE);

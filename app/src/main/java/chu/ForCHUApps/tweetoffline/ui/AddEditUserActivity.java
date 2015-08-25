@@ -16,6 +16,7 @@ import android.widget.EditText;
 import chu.ForCHUApps.tweetoffline.R;
 import chu.ForCHUApps.tweetoffline.db.DatabaseConnector;
 import chu.ForCHUApps.tweetoffline.db.DatabaseOpenHelper;
+import chu.ForCHUApps.tweetoffline.models.User;
 import chu.ForCHUApps.tweetoffline.sms.SMSHelper;
 import chu.ForCHUApps.tweetoffline.sms.SMSReceiver;
 import chu.ForCHUApps.tweetoffline.ui.ConfirmDialogFragment.ConfirmationListener;
@@ -125,9 +126,7 @@ public class AddEditUserActivity extends Activity implements ConfirmationListene
 
         // insert the contact information into the database
         // initially latest tweet and bio are empty strings
-        databaseConnector.insertRecord(
-                mUsername, nameEditText.getText().toString(),
-                "", "", "");
+        databaseConnector.insertRecord(new User(mUsername,  nameEditText.getText().toString()));
 
     } // end class saveContact
 

@@ -74,7 +74,7 @@ public class SyncTwitterContacts extends AsyncTask<String, String, Void> {
         DatabaseConnector followingDatabase = new DatabaseConnector(mContext,
                 DatabaseOpenHelper.DatabaseName.FOLLOWING);
         DatabaseConnector customDatabase = new DatabaseConnector(mContext,
-                DatabaseOpenHelper.DatabaseName.FOLLOWING);
+                DatabaseOpenHelper.DatabaseName.CUSTOM);
 
         try {
             ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -104,6 +104,45 @@ public class SyncTwitterContacts extends AsyncTask<String, String, Void> {
                 following_ids = twitter.getFriendsIDs(cursor);
             }
 
+            // First go through the custom list to update pictures and biographies
+            List<String> customListUsernames = new ArrayList<String>();
+            customDatabase.open();
+            Cursor customDatabaseCursor = customDatabase.getAllRecords("username");
+            if (customDatabaseCursor.moveToFirst()) {
+                while (!customDatabaseCursor.isAfterLast()) {
+                    String username = customDatabaseCursor.getString(customDatabaseCursor
+                            .getColumnIndex("username"));
+                    // remove the @ sign
+                    customListUsernames.add(username.substring(1));
+                    customDatabaseCursor.moveToNext();
+                }
+            }
+            customDatabaseCursor.close();
+            for (String username : customListUsernames) {
+                rateLimitStatus = twitter.getRateLimitStatus();
+                mStatus = rateLimitStatus.get("/users/show/:id");
+                if (mStatus.getRemaining() <= 0) {
+                    // Create message with countdown until sync
+                    publishProgress("countdown");
+
+                    // Wait until rate limit has been reset
+                    synchronized (mWaitToken) {
+                        try {
+                            mWaitToken.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                User user = twitter.showUser(username);
+                chu.ForCHUApps.tweetoffline.models.User contact = new chu.ForCHUApps.tweetoffline.models.User(
+                        "@" + user.getScreenName(), user.getName(), "",
+                        user.getDescription(), user.getBiggerProfileImageURL());
+                customDatabase.insertRecord(contact);
+            }
+            customDatabase.close();
+
+            // next sync the followers database
             for (long id : follower_ids.getIDs()) {
                 rateLimitStatus = twitter.getRateLimitStatus();
                 mStatus = rateLimitStatus.get("/users/show/:id");
@@ -121,16 +160,15 @@ public class SyncTwitterContacts extends AsyncTask<String, String, Void> {
                         }
                     }
                 }
-
                 User user = twitter.showUser(id);
-                followerDatabase.insertRecord(
-                        "@" + user.getScreenName(),
-                        user.getName(),
-                        "", user.getDescription(),
-                        user.getBiggerProfileImageURL());
+                chu.ForCHUApps.tweetoffline.models.User contact = new chu.ForCHUApps.tweetoffline.models.User(
+                        "@" + user.getScreenName(), user.getName(), "",
+                        user.getDescription(), user.getBiggerProfileImageURL());
+                followerDatabase.insertRecord(contact);
             }
             followerDatabase.close();
 
+            // sync the following database
             for (long id : following_ids.getIDs()) {
                 rateLimitStatus = twitter.getRateLimitStatus();
                 mStatus = rateLimitStatus.get("/users/show/:id");
@@ -148,62 +186,16 @@ public class SyncTwitterContacts extends AsyncTask<String, String, Void> {
                     }
                 }
                 User user = twitter.showUser(id);
-                followingDatabase.insertRecord(
-                        "@" + user.getScreenName(),
-                        user.getName(),
-                        "", user.getDescription(),
-                        user.getBiggerProfileImageURL());
+                chu.ForCHUApps.tweetoffline.models.User contact = new chu.ForCHUApps.tweetoffline.models.User(
+                        "@" + user.getScreenName(), user.getName(), "",
+                        user.getDescription(), user.getBiggerProfileImageURL());
+                followingDatabase.insertRecord(contact);
             }
             followingDatabase.close();
-
-            // also go through the custom list to update pictures and biographies
-            List<String> customListUsernames = new ArrayList<String>();
-            customDatabase.open();
-            Cursor customDatabaseCursor = customDatabase.getAllRecords("username");
-            customDatabase.close();
-            if (customDatabaseCursor.moveToFirst()) {
-                while (!customDatabaseCursor.isAfterLast()) {
-                    String username = customDatabaseCursor.getString(customDatabaseCursor
-                            .getColumnIndex("username"));
-                    customListUsernames.add(username);
-                    customDatabaseCursor.moveToNext();
-                }
-            }
-            customDatabaseCursor.close();
-            Log.d("PETER", "populated list with IDS:\n");
-            for (String username : customListUsernames) {
-                Log.d("PETER", username);
-                rateLimitStatus = twitter.getRateLimitStatus();
-                mStatus = rateLimitStatus.get("/users/show/:id");
-                if (mStatus.getRemaining() <= 0) {
-                    // Create message with countdown until sync
-                    publishProgress("countdown");
-
-                    // Wait until rate limit has been reset
-                    synchronized (mWaitToken) {
-                        try {
-                            mWaitToken.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                User user = twitter.showUser(username);
-                followingDatabase.insertRecord(
-                        "@" + user.getScreenName(),
-                        user.getName(),
-                        "", user.getDescription(),
-                        user.getBiggerProfileImageURL());
-            }
-            customDatabase.close();
 
         } catch (TwitterException e) {
             // Error in updating status
             Log.e("SyncTwitterContacts", e.getMessage());
-            Log.e("PETER", "AAA" + e.getMessage());
-            if(mStatus != null) {
-                Log.e( "PETER", "--------- \n " + mStatus.getRemaining());
-            }
         }
         return null;
     }

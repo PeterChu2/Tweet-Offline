@@ -24,7 +24,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         // query to create a new table named contacts
         String createQuery = String.format(
                 "CREATE TABLE %s(_id integer primary key autoincrement," +
-                        "username TEXT UNIQUE, name TEXT," +
+                        "username VARCHAR(15) UNIQUE, name TEXT," +
                         " recentTweet TEXT, bio TEXT, tweetDate INTEGER, pic TEXT);", mDatabaseName.name());
         db.execSQL(createQuery); // execute the query
     } // end method onCreate
