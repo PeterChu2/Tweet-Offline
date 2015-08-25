@@ -2,6 +2,7 @@ package chu.ForCHUApps.tweetoffline.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements ConfirmationListe
     private static Twitter twitter; // Use this to access Twitter API
     private static RequestToken requestToken;
     private String username;
+    private ProgressDialog mProgressDialog;
 
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
@@ -163,6 +165,9 @@ public class MainActivity extends AppCompatActivity implements ConfirmationListe
     @Override
     protected void onPause() {
         super.onPause();
+        if(mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
@@ -231,7 +236,10 @@ public class MainActivity extends AppCompatActivity implements ConfirmationListe
         if (id == R.id.syncList) {
             loginToTwitter();
             if (username != null) {
-                new SyncTwitterContacts(this).execute(username);
+                if(mProgressDialog == null) {
+                    mProgressDialog = new ProgressDialog(this);
+                }
+                new SyncTwitterContacts(this, mProgressDialog).execute(username);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -412,7 +420,10 @@ public class MainActivity extends AppCompatActivity implements ConfirmationListe
                 }
             }
             // Update the database with the newly authenticated user's contacts
-            new SyncTwitterContacts(this).execute(username);
+            if (mProgressDialog == null) {
+                mProgressDialog = new ProgressDialog(this);
+            }
+            new SyncTwitterContacts(this, mProgressDialog).execute(username);
         }
     }
 }

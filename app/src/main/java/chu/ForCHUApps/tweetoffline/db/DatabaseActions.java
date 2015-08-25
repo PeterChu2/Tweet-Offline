@@ -72,10 +72,10 @@ public class DatabaseActions {
         sDatabaseConnector = new DatabaseConnector(context, databaseName);
         if (rowID != null) {
             // User selected an item with a rowID
-            sDatabaseConnector.updateUser(rowID, updateRow);
+            sDatabaseConnector.updateRecord(rowID, updateRow);
         } else {
             // Tweet received with username
-            sDatabaseConnector.updateUserByUsername(updateRow);
+            sDatabaseConnector.updateRecordByUsername(updateRow);
         }
         // Reload User info into the layout if the activity is .ViewUser
         if (((Activity) context).getClass().getName().equals(UserDetailActivity.class.getName())) {

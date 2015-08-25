@@ -1,4 +1,5 @@
 package chu.ForCHUApps.tweetoffline.util;
+
 import android.os.CountDownTimer;
 
 public class APILimitCountDownTimer extends CountDownTimer {
@@ -19,17 +20,14 @@ public class APILimitCountDownTimer extends CountDownTimer {
                 (millisUntilFinished / 1000) / 60 + " minutes, " +
                 (millisUntilFinished / 1000) % 60 + " seconds.\n" +
                 "Dismiss to load in background.");
-        if (millisUntilFinished <= 2000) {
-            // Use wait and notify to start syncing contacts again once the time is up
-            synchronized (mWaitToken) {
-                mSyncTask.showProgress("Fetching User Contacts \n" +
-                        "They will be fetched in the background if this dialog is dismissed");
-                mWaitToken.notify();
-            }
-        }
     }
 
     @Override
     public void onFinish() {
+        synchronized (mWaitToken) {
+            mSyncTask.showProgress("Fetching User Contacts \n" +
+                    "They will be fetched in the background if this dialog is dismissed");
+            mWaitToken.notify();
+        }
     }
 }

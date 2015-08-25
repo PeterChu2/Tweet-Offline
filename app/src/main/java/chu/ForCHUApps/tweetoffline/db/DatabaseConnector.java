@@ -41,7 +41,8 @@ public class DatabaseConnector {
         newRecord.put("bio", bio);
         newRecord.put("pic", profilePicURL);
         open();
-        database.insert(mDatabaseName.name(), null, newRecord);
+        database.insertWithOnConflict(
+                mDatabaseName.name(), null, newRecord, SQLiteDatabase.CONFLICT_REPLACE);
         close();
     }
 
@@ -84,7 +85,7 @@ public class DatabaseConnector {
     }
 
     // Update user data by row ID
-    public void updateUser(long id, ContentValues cv) {
+    public void updateRecord(long id, ContentValues cv) {
         open(); // open the database
         database.update(mDatabaseName.name(), cv, "_id=?", new String[]{String.valueOf(id)});
         close(); // close the database
@@ -95,7 +96,7 @@ public class DatabaseConnector {
     }
 
     // Update user data by username in text
-    public void updateUserByUsername(ContentValues cv) {
+    public void updateRecordByUsername(ContentValues cv) {
         String username;
         username = cv.getAsString("username");
         if (username != null) {
