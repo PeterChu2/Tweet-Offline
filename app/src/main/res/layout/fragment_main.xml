@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="chu.ForCHUApps.tweetoffline.ui.TwitterListFragment">
+
+    <Button
+        android:id="@+id/newButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:drawableLeft="@android:drawable/ic_menu_add"
+        android:gravity="center" />
+
+    <ListView
+        android:id="@+id/twitterList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/newButton"></ListView>
+
+</RelativeLayout>
